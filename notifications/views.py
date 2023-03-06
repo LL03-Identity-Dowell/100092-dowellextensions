@@ -51,10 +51,12 @@ class sendProductNotification(APIView):
                  "username":snippet.username,
                  "portfolio":snippet.portfolio,
                  "productName":snippet.productName,
+                 "companyId":snippet.companyId,
                  "orgName":snippet.orgName,
                  "title":snippet.title,
                  "message":snippet.message,
                  "link":snippet.link,
+                 "duration":snippet.duration,
                  "seen":data['seen'],
                 }
             update_field = {
