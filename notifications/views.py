@@ -67,22 +67,4 @@ class sendProductNotification(APIView):
             print(insert_response)
             return Response(serializer.data)
         return Response(snippet, status=status.HTTP_400_BAD_REQUEST)
-        
-"""
-{
-username
-portfolio
-product name
-org name
-title
-message
-link(koi link hai toh)
-seen = False
-}
-// TODO:
-- psot by product people(local db)
-- get by extenion people
-- when seen flag turns to "true" then 
-    - update to local db
-    - insert to mongodb using dowell connection
-"""
+   
