@@ -1,6 +1,6 @@
-### Backend services for Extension Service
+## Backend services for Extension Service
 
-# api https://100092.pythonanywhere.com/
+### api https://100092.pythonanywhere.com/
 
 _Post_ to `notification/sendProductNotification/`
 
@@ -8,7 +8,7 @@ _Post_ to `notification/sendProductNotification/`
 
 - Request Body
 
-````json
+```json
 {
         "username": "<username>",
         "portfolio": "<portfolio name>",
@@ -20,7 +20,9 @@ _Post_ to `notification/sendProductNotification/`
         "link": "<if any link or dont post>",
         "duration": "<time duration or type no limit",
         "seen": false
-    },```
+},
+
+```
 
 - Response 201
 
@@ -38,7 +40,7 @@ _Post_ to `notification/sendProductNotification/`
         "duration": "<time duration or type no limit",
         "seen": false
     },
-````
+```
 
 - Response 400
 
