@@ -12,7 +12,6 @@
         "productName": "<product name>",
         "action": "<true or false>",
         "orgName": "<org name>",
-        "title": "<Notification title>",
         "image": "<uploaded image optional>",
     }
 
@@ -29,7 +28,6 @@
         "productName": "<product name>",
         "action": "<true>",
         "orgName": "<org name>",
-        "title": "<Notification title>",
         "image": "<uploaded image>",
     }
     ```
@@ -52,7 +50,6 @@
         "productName": "<product name>",
         "action": "<true>",
         "orgName": "<org name>",
-        "title": "<Notification title>",
         "image": "<uploaded image>",
     }
     ```
@@ -84,7 +81,6 @@
         "productName": "<product name>",
         "action": "<false>",
         "orgName": "<org name>",
-        "title": "<Notification title>",
         "image": "<uploaded image>",
     }
     ```
