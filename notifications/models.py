@@ -10,6 +10,6 @@ class Noftification(models.Model):
     orgName = models.CharField(max_length=300)
     title = models.CharField(max_length=500)
     message =models.CharField(max_length=500)
-    link = models.CharField(max_length=300, blank=True, null= True)
+    link = models.CharField(max_length=1080, blank=True, null= True)
     duration = models.CharField(max_length=300, null= True)
     seen = models.BooleanField(default=False)
