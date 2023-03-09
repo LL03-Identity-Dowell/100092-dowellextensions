@@ -1,6 +1,6 @@
 ## Notification Service
 
-### *api_url* : `https://100092.pythonanywhere.com/notification/notification/`
+*api_url* : `https://100092.pythonanywhere.com/notification/notification/`
 
 - *POST*
 
