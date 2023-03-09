@@ -3,10 +3,15 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.response import Response
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 from rest_framework import viewsets
 from .models import *
+from urllib.request import urlopen
 from .serializers import *
 from rest_framework.views import APIView
+from PIL import Image as PILImage
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class postfavourite(APIView):
@@ -15,7 +20,6 @@ class postfavourite(APIView):
             return favourite.objects.get(pk=pk)
         except favourite.DoesNotExist:
             return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
-
     def post(self, request):
         data = request.data.copy()
         if 'image' in data and data['image']:
@@ -31,13 +35,14 @@ class postfavourite(APIView):
             with open('favourite/favourite.json') as f:
                 # Load the JSON data into a Python dictionary
                 json_data = json.load(f)
-                print(json_data)
+                # print(json_data)
             # Get the values from the dictionary and put them in a list
             for i in json_data:
                 if product == i['title']:
                     image_url = i['image']
-            if 'image' not in data:
-                data['image'] = image_url
+                    print(image_url)
+            data['image_url'] = image_url
+            
             serializer = favouriteSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
