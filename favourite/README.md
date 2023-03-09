@@ -1,6 +1,5 @@
 ## Favourite Services
-
-### *api_url* : `https://100092.pythonanywhere.com/favourite/favourite/`
+*api_url* : `https://100092.pythonanywhere.com/favourite/favourite/`
 
 - *POST*
 
