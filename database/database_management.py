@@ -1,4 +1,4 @@
-notification = [
+notification_details = [
     "extension",
     "extension",
     "notification",

@@ -3,7 +3,7 @@ from notifications.views import *
 
 urlpatterns = [
     path('serverStatus/',serverStatus.as_view()),
-    path('sendProductNotification/',sendProductNotification.as_view()),
-    path('putProductNotification/<int:pk>',sendProductNotification.as_view()),
+    path('notification/',notification.as_view()),
+    path('notification/<int:pk>',notification.as_view()),
 
 ]

@@ -14,7 +14,7 @@ from PIL import Image as PILImage
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class postfavourite(APIView):
+class setasfavourite(APIView):
     def get_object(self, pk):
         try:
             return favourite.objects.get(pk=pk)

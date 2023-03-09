@@ -9,7 +9,7 @@ from .serializers import *
 from rest_framework.views import APIView
 from database.connection import dowellconnection
 from database.event import get_event_id
-from database.database_management import notification
+from database.database_management import notification_details
 
 @method_decorator(csrf_exempt, name='dispatch')
 class serverStatus(APIView):
@@ -19,7 +19,7 @@ class serverStatus(APIView):
     
 
 @method_decorator(csrf_exempt, name='dispatch')
-class sendProductNotification(APIView):
+class notification(APIView):
     def get_object(self, pk):
         try:
             return Noftification.objects.get(pk=pk)
@@ -63,7 +63,7 @@ class sendProductNotification(APIView):
                 "status":"nothing to update"
             }
         
-            insert_response = dowellconnection(*notification,"insert",field,update_field)
+            insert_response = dowellconnection(*notification_details,"insert",field,update_field)
             print(insert_response)
             return Response(serializer.data)
         return Response(snippet, status=status.HTTP_400_BAD_REQUEST)
