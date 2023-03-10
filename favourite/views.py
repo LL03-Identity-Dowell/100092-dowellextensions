@@ -1,4 +1,5 @@
 import json
+import os
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
@@ -64,4 +65,11 @@ class setasfavourite(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(snippet, status=status.HTTP_400_BAD_REQUEST)
-   
+    
+    def delete(self, request, pk, format=None):
+        try:
+            snippet = self.get_object(pk)
+            snippet.delete()
+            return Response([],status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response({"message": "no data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

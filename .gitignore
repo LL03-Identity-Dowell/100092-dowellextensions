@@ -109,7 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-media/
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+/notifications/migrations/*
+/media/*
+/favourite/migrations/*

@@ -95,3 +95,14 @@
 
     }
     ```
+- *Delete* /<int:pk>
+Response-204
+```
+[]
+```
+Response-500
+```json
+{
+    "message": "no data"
+}
+```
