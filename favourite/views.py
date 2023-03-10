@@ -58,7 +58,6 @@ class setasfavourite(APIView):
     def put(self, request, pk, format=None):
         snippet = self.get_object(pk)
         data = request.data
-        # snippet.action = data["action"]
         snippet.save()
         serializer = favouriteSerializer(snippet, data=request.data)
         if serializer.is_valid():
