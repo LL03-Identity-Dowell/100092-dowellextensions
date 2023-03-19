@@ -73,3 +73,11 @@ class setasfavourite(APIView):
             return Response([],status=status.HTTP_204_NO_CONTENT)
         except:
             return Response({"message": "no data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+@method_decorator(csrf_exempt, name='dispatch')
+class favouriteIcon(APIView):
+    def get(self, request):
+        with open('favourite/favouriteicons.json') as f:
+            json_data = json.load(f)
+            return Response(json_data)

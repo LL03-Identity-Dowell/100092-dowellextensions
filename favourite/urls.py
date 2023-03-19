@@ -4,5 +4,6 @@ from .views import *
 urlpatterns = [
     path('favourite/',setasfavourite.as_view()),
     path('favourite/<int:pk>',setasfavourite.as_view()),
+    path('favouriteIcon/',favouriteIcon.as_view()),
 
 ]
