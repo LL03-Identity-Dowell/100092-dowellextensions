@@ -78,6 +78,6 @@ class setasfavourite(APIView):
 @method_decorator(csrf_exempt, name='dispatch')
 class favouriteIcon(APIView):
     def get(self, request):
-        with open('favourite/favouriteicons.json') as f:
+        with open('/home/100092/100092-dowellextensions/favourite/favouriteIcons.json') as f:
             json_data = json.load(f)
             return Response(json_data)
