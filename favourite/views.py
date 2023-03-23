@@ -1,17 +1,13 @@
 import json
-import os
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.response import Response
-from django.core.files import File
-from django.core.files.temp import NamedTemporaryFile
 from rest_framework import viewsets
 from .models import *
-from urllib.request import urlopen
 from .serializers import *
 from rest_framework.views import APIView
-from PIL import Image as PILImage
+import imghdr
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -81,3 +77,27 @@ class favouriteIcon(APIView):
         with open('/home/100092/100092-dowellextensions/favourite/favouriteIcons.json') as f:
             json_data = json.load(f)
             return Response(json_data)
+        
+class FavouriteImageView(viewsets.ModelViewSet):
+    queryset = FavouriteImage.objects.all()
+    serializer_class = ImageSerializer
+
+    def create(self, request, *args, **kwargs):
+        image = request.data.get('image', None)
+        username = request.data.get('username', None)
+        session_id = request.data.get('session_id', None)
+
+        if image and username and session_id:
+            image_data = image.read()
+            image_data_base64 = base64.b64encode(image_data)
+            image_data_base64_string = image_data_base64.decode('utf-8')
+            image_format = imghdr.what(None, image_data)
+            image_data_base64_string = f"data:image/{image_format};base64,{image_data_base64_string}"
+            request.data['image'] = image_data_base64_string
+            serializer = ImageSerializer(data=request.data)
+            if serializer.is_valid():
+                return super().create(request, *args, **kwargs)
+            else:
+                return Response(serializer.errors,
+                                status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'all fields required'}, status=status.HTTP_400_BAD_REQUEST)
