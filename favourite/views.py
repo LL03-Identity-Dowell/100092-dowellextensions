@@ -77,7 +77,8 @@ class favouriteIcon(APIView):
         with open('/home/100092/100092-dowellextensions/favourite/favouriteIcons.json') as f:
             json_data = json.load(f)
             return Response(json_data)
-        
+
+@method_decorator(csrf_exempt, name='dispatch')        
 class FavouriteImageView(viewsets.ModelViewSet):
     queryset = FavouriteImage.objects.all()
     serializer_class = ImageSerializer
