@@ -38,33 +38,19 @@ class notification(APIView):
         serializer = sendProductNotificationSerializer(snippets, many=True)
         return Response(serializer.data)
     
-    def put(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        data = request.data
-        snippet.seen = data["seen"]
-        snippet.save()
-        serializer = sendProductNotificationSerializer(snippet, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            field = {
-                 "evenId":get_event_id()['event_id'],
-                 "username":snippet.username,
-                 "portfolio":snippet.portfolio,
-                 "productName":snippet.productName,
-                 "companyId":snippet.companyId,
-                 "orgName":snippet.orgName,
-                 "title":snippet.title,
-                 "message":snippet.message,
-                 "link":snippet.link,
-                 "duration":snippet.duration,
-                 "seen":data['seen'],
-                }
-            update_field = {
-                "status":"nothing to update"
-            }
-        
-            insert_response = dowellconnection(*notification_details,"insert",field,update_field)
-            print(insert_response)
-            return Response(serializer.data)
-        return Response(snippet, status=status.HTTP_400_BAD_REQUEST)
+    def patch(self, request, pk, format=None):
+        Notification = self.get_object(pk)
+        Notification.seen = True
+        Notification.save()
+        return Response({"message": "success"}, status=status.HTTP_200_OK)
+    
+    # def patch(self, request, pk, format=None):
+    #     snippet = self.get_object(pk)
+    #     snippet.seen = True
+    #     snippet.save()
+    #     serializer = sendProductNotificationSerializer(snippet, data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(snippet, status=status.HTTP_400_BAD_REQUEST)
    
