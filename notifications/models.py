@@ -14,6 +14,7 @@ class Noftification(models.Model):
     duration = models.CharField(max_length=300, null= True)
     seen = models.BooleanField(default=False)
     button_status = models.CharField(max_length=300, blank=True, null=True)
+    document_id = models.CharField(max_length=300, blank=True, null=True)
 
     def __str__(self):
         return f'{self.username}'

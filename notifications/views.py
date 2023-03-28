@@ -3,7 +3,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import viewsets
 from .models import *
 from .serializers import *
 from rest_framework.views import APIView
@@ -20,9 +19,9 @@ class serverStatus(APIView):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class notification(APIView):
-    def get_object(self, pk):
+    def get_object(self, document_id):
         try:
-            return Noftification.objects.get(pk=pk)
+            return Noftification.objects.get(document_id=document_id)
         except Noftification.DoesNotExist:
             return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
     def post(self, request):
@@ -38,19 +37,17 @@ class notification(APIView):
         serializer = sendProductNotificationSerializer(snippets, many=True)
         return Response(serializer.data)
     
-    def patch(self, request, pk, format=None):
-        Notification = self.get_object(pk)
+    def patch(self, request, document_id, format=None):
+        Notification = self.get_object(document_id)
         Notification.seen = True
         Notification.save()
         return Response({"message": "success"}, status=status.HTTP_200_OK)
     
-    # def patch(self, request, pk, format=None):
-    #     snippet = self.get_object(pk)
-    #     snippet.seen = True
-    #     snippet.save()
-    #     serializer = sendProductNotificationSerializer(snippet, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(snippet, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, document_id, format=None):
+        try:
+            Notification = self.get_object(document_id)
+            Notification.delete()
+            return Response([],status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response({"message": "no data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
    
