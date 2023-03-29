@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Upload Image | Chrome Extension</title>
+    <link rel="stylesheet" href="staticfiles/style.css"> 
+    <link rel="icon" href="staticfiles/logo.png" type="image/x-icon">
+   
+  </head>
+    
+  <body>
+    <main>
+        <h1>Dowell Chrome Extension</h1>                 
+       <form onsubmit="return sendData()" method="post" id="demo">
+       <!--<div onclick="sendData()" id="demo">-->
+           <button id="selection" onclick="simClick()">Select an Image</button>
+           <span id="fileName"></span>           
+           <span class="clasFile"></span>           
+            <input type="file" name="image" id="getFile" onchange="fileSelect()">
+           <!--You can set 'username' and 'session_id' to hidden -->
+            <input type="text" name="session_id" id="getSessId" placeholder="Session ID"><br>
+            <input type="text" name="username" id="getUser" placeholder="Username"><br>
+            <input type="submit" id="uploadIt" value="Upload">
+        </form>  <br><br>           
+        
+       <div>
+           <b>Uploaded Images:</b>
+          <div id="showImgs">
+             
+          </div>
+       </div>      
+    </main>
+    
+      
+            
+      
+      
+	<script src="staticfiles/script.js"></script>   
+  </body>
+</html>
