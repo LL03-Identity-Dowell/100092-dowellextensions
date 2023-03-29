@@ -18,7 +18,8 @@
             "message": "<Message>",
             "link": "<if any link or dont post>",
             "duration": "<time duration or type no limit",
-            "seen": false
+            "seen": false,
+            "document_id":"<document_id>"
     }
 
     ```
