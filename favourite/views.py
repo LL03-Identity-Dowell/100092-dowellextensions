@@ -87,12 +87,13 @@ class FavouriteImageView(APIView):
         session_id = request.data.get('session_id', None)
 
         if image and username and session_id:
-            image_data = image.read()
-            image_data_base64 = base64.b64encode(image_data)
-            image_data_base64_string = image_data_base64.decode('utf-8')
-            image_format = imghdr.what(None, image_data)
-            image_data_base64_string = f"data:image/{image_format};base64,{image_data_base64_string}"
-            request.data['image'] = image_data_base64_string
+            if not type(image) == str:
+                image_data = image.read()
+                image_data_base64 = base64.b64encode(image_data)
+                image_data_base64_string = image_data_base64.decode('utf-8')
+                image_format = imghdr.what(None, image_data)
+                image_data_base64_string = f"data:image/{image_format};base64,{image_data_base64_string}"
+                request.data['image'] = image_data_base64_string
             serializer = ImageSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
