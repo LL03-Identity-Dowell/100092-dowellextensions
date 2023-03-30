@@ -102,3 +102,11 @@ class FavouriteImageView(viewsets.ModelViewSet):
                 return Response(serializer.errors,
                                 status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'all fields required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def retrieve(self, request, *args, **kwargs):
+        username = kwargs.get('username', None)
+        queryset = self.queryset.filter(FavouriteImage__username=username)
+        instance = self.get_object(queryset=queryset)
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        return Response(data)
