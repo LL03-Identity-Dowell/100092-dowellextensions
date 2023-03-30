@@ -77,13 +77,11 @@ class favouriteIcon(APIView):
         with open('/home/100092/100092-dowellextensions/favourite/favouriteIcons.json') as f:
             json_data = json.load(f)
             return Response(json_data)
+        
 
-@method_decorator(csrf_exempt, name='dispatch')        
-class FavouriteImageView(viewsets.ModelViewSet):
-    queryset = FavouriteImage.objects.all()
-    serializer_class = ImageSerializer
-
-    def create(self, request, *args, **kwargs):
+@method_decorator(csrf_exempt, name='dispatch') 
+class FavouriteImageView(APIView):
+    def post(self, request):
         image = request.data.get('image', None)
         username = request.data.get('username', None)
         session_id = request.data.get('session_id', None)
@@ -97,16 +95,17 @@ class FavouriteImageView(viewsets.ModelViewSet):
             request.data['image'] = image_data_base64_string
             serializer = ImageSerializer(data=request.data)
             if serializer.is_valid():
-                return super().create(request, *args, **kwargs)
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.errors,
                                 status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'all fields required'}, status=status.HTTP_400_BAD_REQUEST)
     
-    def retrieve(self, request, *args, **kwargs):
-        username = kwargs.get('username', None)
-        queryset = self.queryset.filter(FavouriteImage__username=username)
-        instance = self.get_object(queryset=queryset)
-        serializer = self.get_serializer(instance)
-        data = serializer.data
-        return Response(data)
+    def get(self, request, username):
+        try:
+            favourites = FavouriteImage.objects.filter(username = username)
+            serializer = ImageSerializer(favourites, many=True)
+            return Response(serializer.data)
+        except favourite.DoesNotExist:
+            return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
