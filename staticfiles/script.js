@@ -1,3 +1,4 @@
+let getUsername =  ''; //username 
 window.onload = (event) => { 
     event.default();
     revealImages() 
@@ -38,16 +39,16 @@ function sendData () {
 
 function revealImages(){
      window.getImages = document.getElementById('showImgs');
-    fetch("http://100092.pythonanywhere.com/favourite/favouriteImage/")  
+    fetch(`http://100092.pythonanywhere.com/favourite/favouriteImage/${getUsername}`)
+    //You can test with username: Jude
+    //fetch("http://100092.pythonanywhere.com/favourite/favouriteImage/Jude")      
     .then(res => res.json())
     .then((res) => {
-        res.map((data) => {
-            //Adjust username below based on userinfo API
-            if(data.username === 'Jude'){
-                //getImages.innerHTML = data.image;
-                getImages.appendChild(convertBase64ToImage(data.image));
+        res.map((data) => {              
+            getImages.appendChild(convertBase64ToImage(data.image));
                 console.log("Base64 Image Conversion: Success!")
-            }   } )   })
+            document.querySelector(".loader-container").style.display = "none";
+               } )   })
     .catch(err => console.error("Error:", err));   
     }
 
