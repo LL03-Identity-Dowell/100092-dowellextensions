@@ -1,113 +1,108 @@
 ## Notification Service
 
-*api_url* : `https://100092.pythonanywhere.com/notification/notification/`
+_api_url_ : `https://100092.pythonanywhere.com/notification/notification/`
 
-- *POST*
+- _POST_
 
+  - Request Body
 
-    - Request Body
+  ```json
+  {
+    "username": "<username>",
+    "portfolio": "<portfolio name>",
+    "productName": "<product name>",
+    "companyId": "<company_id>",
+    "orgName": "<org name>",
+    "title": "<Notification title>",
+    "message": "<Message>",
+    "link": "<if any link or dont post>",
+    "duration": "<time duration or type no limit",
+    "seen": false,
+    "document_id": "<document_id>",
+    "button_status": "title"
+  }
+  ```
 
-    ```json
-    {
-            "username": "<username>",
-            "portfolio": "<portfolio name>",
-            "productName": "<product name>",
-            "companyId": "<company_id>",
-            "orgName": "<org name>",
-            "title": "<Notification title>",
-            "message": "<Message>",
-            "link": "<if any link or dont post>",
-            "duration": "<time duration or type no limit",
-            "seen": false,
-            "document_id":"<document_id>"
-    }
+  - Response 201
 
-    ```
+  ```json
+  {
+          "id": 1,
+          "username": "<username>",
+          "portfolio": "<portfolio name>",
+          "productName": "<product name>",
+          "companyId": "<company_id>",
+          "orgName": "<org name>",
+          "title": "<Notification title>",
+          "message": "<Message>",
+          "link": "<if any link or dont post>",
+          "duration": "<time duration or type no limit",
+          "seen": false
+      },
+  ```
 
-    - Response 201
+  - Response 400
 
-    ```json
-    {
-            "id": 1,
-            "username": "<username>",
-            "portfolio": "<portfolio name>",
-            "productName": "<product name>",
-            "companyId": "<company_id>",
-            "orgName": "<org name>",
-            "title": "<Notification title>",
-            "message": "<Message>",
-            "link": "<if any link or dont post>",
-            "duration": "<time duration or type no limit",
-            "seen": false
-        },
-    ```
-    - Response 400
+  ```json
+  {
+      {"message":"serializer.errors"},status=400
+  }
+  ```
 
-    ```json
-    {
-        {"message":"serializer.errors"},status=400
-    }
-    ```
+- _GET_
 
-- *GET*
+  - Response 200
 
-    - Response 201
+  ```json
+  {
+          "id": 1,
+          "username": "<username>",
+          "portfolio": "<portfolio name>",
+          "productName": "<product name>",
+          "companyId": "<company_id>",
+          "orgName": "<org name>",
+          "title": "<Notification title>",
+          "message": "<Message>",
+          "link": "<if any link or dont post>",
+          "duration": "<time duration or type no limit",
+          "seen": false,
+          "button_status": "title",
+          "document_id": "id"
+      },
+  ```
 
-    ```json
-    {
-            "id": 1,
-            "username": "<username>",
-            "portfolio": "<portfolio name>",
-            "productName": "<product name>",
-            "companyId": "<company_id>",
-            "orgName": "<org name>",
-            "title": "<Notification title>",
-            "message": "<Message>",
-            "link": "<if any link or dont post>",
-            "duration": "<time duration or type no limit",
-            "seen": false
-        },
-    ```
+  - Response 400
 
-    - Response 400
+  ```json
+  {
+      {"message":"serializer.errors"},status=400
+  }
+  ```
 
-    ```json
-    {
-        {"message":"serializer.errors"},status=400
-    }
-    ```
+- _PATCH_ to `/<int:document_id>`
 
-- *PUT* to `/<int:pk>`
-    - Request Body
+  - Response 200
 
-    ```json
-    {
-    "seen": "<True>"
-    }
-    ```
+  ```json
+  {"message": "success"},
+  ```
 
-    - Response 201
+  - Response 404
 
-    ```json
-    {
-            "id": 1,
-            "username": "<username>",
-            "portfolio": "<portfolio name>",
-            "productName": "<product name>",
-            "companyId": "<company_id>",
-            "orgName": "<org name>",
-            "title": "<Notification title>",
-            "message": "<Message>",
-            "link": "<if any link or dont post>",
-            "duration": "<time duration or type no limit",
-            "seen": true
-        },
-    ```
+  ```json
+  { "message": "Not Found" }
+  ```
 
-    - Response 400
+- _DELETE_ to `/<int:document_id>`
 
-    ```json
-    {
-        {"message":"serializer.errors"},status=400
-    }
-    ```
+  - Response 204
+
+  ```json
+  []
+  ```
+
+  - Response 404
+
+  ```json
+  { "message": "Not Found" }
+  ```
