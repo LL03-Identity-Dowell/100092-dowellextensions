@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "notifications",
     "favourite",
+    "Announcement"
 ]
 
 MIDDLEWARE = [
