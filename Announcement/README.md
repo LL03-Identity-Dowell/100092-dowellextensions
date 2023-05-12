@@ -10,10 +10,10 @@ _api_url_ : `https://100092.pythonanywhere.com/announcement/`
   {
     "description": "Hello World",
     "product": "WorkFlow",
-    "created_by": "fazzie",
-    "member_type": "workflow",
+    "created_by": "Manish",
+    "member_type": "Public | Member | User",
     "company_id": "sahjg272346",
-    "created_at_position": "admin"
+    "created_at_position": "Platform Admin"
   }
   ```
 
