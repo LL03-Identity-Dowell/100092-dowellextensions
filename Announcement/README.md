@@ -1,6 +1,6 @@
 ## Announcement Services
 
-_api_url_ : `https://100092.pythonanywhere.com/announcement/`
+_api_url_ : `https://100092.pythonanywhere.com/announcements/`
 
 - _POST_
 
