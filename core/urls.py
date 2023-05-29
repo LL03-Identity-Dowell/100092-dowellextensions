@@ -22,7 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('notification/', include('notifications.urls')),
     path('favourite/', include('favourite.urls')),
-    path('announcement/', include('Announcement.urls'))
+    path('announcements/', include('Announcement.urls')),
+    path('', include('healthcheck.urls')),
 
 ]
 if settings.DEBUG:

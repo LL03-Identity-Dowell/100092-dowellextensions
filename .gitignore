@@ -131,3 +131,4 @@ dmypy.json
 /notifications/migrations/*
 /media/*
 /favourite/migrations/*
+db.sqlite3
