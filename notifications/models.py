@@ -3,19 +3,21 @@ from django.db import models
 # Create your models here.
 
 
-class Noftification(models.Model):
+class ProductNotification(models.Model):
+    document_id = models.CharField(max_length=300, blank=True, null=True)
+    document_type = models.CharField(max_length=300, default="product_notification")
     username = models.CharField(max_length=300)
     portfolio = models.CharField(max_length=300)
-    productName = models.CharField(max_length=300)
-    companyId = models.CharField(max_length=300, null=True)
-    orgName = models.CharField(max_length=300)
+    product_name = models.CharField(max_length=300)
+    company_id = models.CharField(max_length=300, null=True)
+    org_name = models.CharField(max_length=300)
     title = models.CharField(max_length=500)
     message = models.CharField(max_length=500)
     link = models.CharField(max_length=2048, blank=True, null=True)
     duration = models.CharField(max_length=300, null=True)
     seen = models.BooleanField(default=False)
     button_status = models.CharField(max_length=300, blank=True, null=True)
-    document_id = models.CharField(max_length=300, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.username}'
@@ -35,6 +37,8 @@ class Notification(models.Model):
     flag = models.BooleanField()
     type_of_notification = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    document_id = models.CharField(max_length=300, blank=True, null=True)
+    document_type = models.CharField(max_length=300, default="notification")
 
     def __str__(self):
         return f'{self.org_name}'
