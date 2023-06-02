@@ -30,8 +30,8 @@ class ProductNotificationSerializer(serializers.ModelSerializer):
             return response
         
         except Exception as e:
-            logger.info(f"Data not saved: ({e})")
-            raise ValueError(f"Data not saved: ({e})")
+            logger.info(f"Notification Not Saved: ({e})")
+            raise ValueError(f"Notification Not Saved: ({e})")
     
 
     def update(self, document:dict, validated_data):
@@ -88,8 +88,8 @@ class NotificationSerializer(serializers.ModelSerializer):
             return response
         
         except Exception as e:
-            logger.info(f"Data not saved: ({e})")
-            raise ValueError(f"Data not saved: ({e})")
+            logger.info(f"Notification Not Saved: ({e})")
+            raise ValueError(f"Notification Not Saved: ({e})")
     
 
     def update(self, document:dict, validated_data):
