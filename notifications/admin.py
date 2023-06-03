@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Noftification
+from .models import ProductNotification
 
 # Register your models here.
-admin.site.register(Noftification)
+admin.site.register(ProductNotification)
