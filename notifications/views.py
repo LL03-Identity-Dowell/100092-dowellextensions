@@ -1,3 +1,4 @@
+import json
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status, generics
@@ -24,8 +25,8 @@ class ProductNotificationList(APIView):
             response_json = fetch_document(
                 collection=NOTIFICATION_COLLECTION,
                 fields={
-                    "notification.document_type": "product_notification",
-                    "notification.deleted": False
+                    "notification.deleted": False,
+                    "notification.document_type": "product_notification"
                 },
             )
             return Response(response_json)
@@ -59,9 +60,9 @@ class ProductNotificationDetail(APIView):
             response_json = fetch_document(
                 collection=NOTIFICATION_COLLECTION,
                 fields={
-                    "notification.document_type": "product_notification",
-                    "notification.document_id": document_id,
-                    "notification.deleted": False
+                    "_id": document_id,
+                    "notification.deleted": False,
+                    "notification.document_type": "product_notification"
                 },
             )
             return Response(response_json)
@@ -79,9 +80,9 @@ class ProductNotificationDetail(APIView):
             response = fetch_document(
                 collection=NOTIFICATION_COLLECTION,
                 fields={
-                    "notification.document_type": "product_notification",
-                    "notification.document_id": document_id,
-                    "notification.deleted": False
+                    "_id": document_id,
+                    "notification.deleted": False,
+                    "notification.document_type": "product_notification"
                 },
             )
 
@@ -111,9 +112,9 @@ class ProductNotificationDetail(APIView):
             response = fetch_document(
                 collection=NOTIFICATION_COLLECTION,
                 fields={
-                    "notification.document_type": "product_notification",
-                    "notification.document_id": document_id,
-                    "notification.deleted": False
+                    "_id": document_id,
+                    "notification.deleted": False,
+                    "notification.document_type": "product_notification"
                 },
             )
 
@@ -148,8 +149,8 @@ class NotificationList(APIView):
             response_json = fetch_document(
                 collection=NOTIFICATION_COLLECTION,
                 fields={
-                    "notification.document_type": "notification",
-                    "notification.deleted": False
+                    "notification.deleted": False,
+                    "notification.document_type": "notification"
                 },
             )
             return Response(response_json)
@@ -184,9 +185,9 @@ class NotificationDetail(APIView):
             response_json = fetch_document(
                 collection=NOTIFICATION_COLLECTION,
                 fields={
-                    "notification.document_type": "notification",
-                    "notification.document_id": document_id,
-                    "notification.deleted": False
+                    "_id": document_id,
+                    "notification.deleted": False,
+                    "notification.document_type": "notification"
                 },
             )
             return Response(response_json)
@@ -204,9 +205,9 @@ class NotificationDetail(APIView):
             response = fetch_document(
                 collection=NOTIFICATION_COLLECTION,
                 fields={
-                    "notification.document_type": "notification",
-                    "notification.document_id": document_id,
-                    "notification.deleted": False
+                    "_id": document_id,
+                    "notification.deleted": False,
+                    "notification.document_type": "notification"
                 },
             )
 
@@ -236,9 +237,9 @@ class NotificationDetail(APIView):
             response = fetch_document(
                 collection=NOTIFICATION_COLLECTION,
                 fields={
-                    "notification.document_type": "notification",
-                    "notification.document_id": document_id,
-                    "notification.deleted": False
+                    "_id": document_id,
+                    "notification.deleted": False,
+                    "notification.document_type": "notification"
                 },
             )
 

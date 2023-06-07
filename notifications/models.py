@@ -34,7 +34,6 @@ class Notification(Common):
     desc = models.TextField()
     org_name = models.CharField(max_length=255)
     meant_for = models.CharField(max_length=255)
-    flag = models.BooleanField()
     type_of_notification = models.CharField(max_length=255)
 
     def __str__(self):

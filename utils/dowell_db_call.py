@@ -1,6 +1,7 @@
 import requests
 import json
 from datetime import datetime
+import uuid
 import sys
 import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -32,54 +33,52 @@ DATABASE = "extension"
 CLUSTER = "extension"
 
 # RECORD LOAD
-BASE_URL = "https://100092.pythonanywhere.com/"
+BASE_URL = "http://uxlivinglab.pythonanywhere.com/"
 
 
 def format_id(id):
     return f"ObjectId"+"("+"'{id}'"+")"
 
-
 def get_event_id():
-    dd = datetime.now()
-    time = dd.strftime("%d:%m:%Y,%H:%M:%S")
-    url = "https://100003.pythonanywhere.com/event_creation"
+    url= f"{BASE_URL}create_event"
 
-    data = {
-        "platformcode": "FB",
-        "citycode": "101",
-        "daycode": "0",
-        "dbcode": "pfm",
-        "ip_address": "192.168.0.41",
-        "login_id": "lav",
-        "session_id": "new",
-        "processcode": "1",
-        "regional_time": time,
-        "dowell_time": time,
-        "location": "22446576",
-        "objectcode": "1",
-        "instancecode": "100051",
-        "context": "afdafa ",
-        "document_id": "3004",
-        "rules": "some rules",
-        "status": "work",
+    data={
+        "platformcode":"FB" ,
+        "citycode":"101",
+        "daycode":"0",
+        "dbcode":"pfm" ,
+        "ip_address":"192.168.0.41", # get from dowell track my ip function 
+        "login_id":"lav", #get from login function
+        "session_id":"new", #get from login function
+        "processcode":"1",
+        "location":"22446576", # get from dowell track my ip function 
+        "objectcode":"1",
+        "instancecode":"100051",
+        "context":"afdafa ",
+        "document_id":"3004",
+        "rules":"some rules",
+        "status":"work",
         "data_type": "learn",
         "purpose_of_usage": "add",
-        "colour": "color value",
-        "hashtags": "hash tag alue",
-        "mentions": "mentions value",
-        "emojis": "emojis",
-
+        "colour":"color value",
+        "hashtags":"hash tag alue",
+        "mentions":"mentions value",
+        "emojis":"emojis",
+        "bookmarks": "a book marks"
     }
 
-    r = requests.post(url, json=data)
-    return r.text
+    r=requests.post(url,json=data)
+    if r.status_code == 201:
+        return json.loads(r.text)
+    else: 
+        return json.loads(r.text)['error']
+
+
+
 
 
 def save_document(collection: str, value: dict):
-    url = "http://100002.pythonanywhere.com/"
     event_id = get_event_id()
-    value['document_id'] = event_id
-    value['event_id'] = event_id
 
     # Build request data or payload
     payload = json.dumps({
@@ -104,21 +103,14 @@ def save_document(collection: str, value: dict):
     }
 
     # Send POST request to server
-    response = requests.request("POST", url, headers=headers, data=payload)
-    json_data = response.json()
-    json_data['eventId'] = event_id
-    json_data[DOCUMENT_NAMES[collection]] = value
-    return json_data
+    r = requests.request("POST", BASE_URL, headers=headers, data=payload)
+    return json.loads(r.json())
 
 def update_document(
     collection: str,
     new_value: dict,
     document_id: str
 ):
-    url = "http://100002.pythonanywhere.com/"
-    new_value['eventId'] = document_id
-    new_value['document_id'] = document_id
-
     # Build request data or payload
     payload = json.dumps({
         "cluster": CLUSTER,
@@ -128,9 +120,7 @@ def update_document(
         "team_member_ID": TEAM_IDS[collection],
         "function_ID": DEFAULT_FUNC_ID,
         "command": "update",
-        "field": {
-            'eventId': document_id,
-        },
+        "field": {'_id': document_id},
         "update_field": {DOCUMENT_NAMES[collection]: new_value},
         "platform": "bangalore"
     })
@@ -141,16 +131,14 @@ def update_document(
     }
 
     # Send POST request to server
-    response = requests.request("POST", url, headers=headers, data=payload)
-    return response.json()
+    r = requests.request("POST", BASE_URL, headers=headers, data=payload)
+    return json.loads(r.json())
 
 
 def fetch_document(
     collection: str,
     fields: dict,
 ):
-    url = "http://100002.pythonanywhere.com/"
-
     # Build request data or payload
     payload = json.dumps({
         "cluster": CLUSTER,
@@ -173,8 +161,8 @@ def fetch_document(
     }
 
     # Send POST request to server
-    response = requests.request("POST", url, headers=headers, data=payload)
-    return response.json()
+    r = requests.request("POST", BASE_URL, headers=headers, data=payload)
+    return json.loads(r.json())
 
 
 if __name__ == "__main__":
