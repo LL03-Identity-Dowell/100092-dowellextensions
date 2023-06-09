@@ -6,7 +6,6 @@ class Common(models.Model):
     created_by = models.CharField(max_length=300)
     seen = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    company_id = models.CharField(max_length=300, null=True)
     org_name = models.CharField(max_length=300)
     org_id = models.CharField(max_length=255)
 
@@ -32,7 +31,6 @@ class Notification(Common):
     from_field = models.CharField(max_length=255)
     to = models.CharField(max_length=255)
     desc = models.TextField()
-    org_name = models.CharField(max_length=255)
     meant_for = models.CharField(max_length=255)
     type_of_notification = models.CharField(max_length=255)
 
