@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('notifications.urls')),
     path('favourite/', include('favourite.urls')),
-    path('announcements/', include('Announcement.urls')),
+    path('api/', include('Announcement.urls')),
     path('', include('healthcheck.urls')),
 
 ]
