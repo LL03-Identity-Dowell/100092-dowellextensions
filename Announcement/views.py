@@ -50,6 +50,9 @@ class AnnouncementDetail(APIView):
                     "_id": id
                 },
             )
+            # if len(response_json['data']) == 0:
+            #     return Response(
+            #         status=status.HTTP_404_NOT_FOUND)
             return Response(response_json)
 
         except Exception as e:
