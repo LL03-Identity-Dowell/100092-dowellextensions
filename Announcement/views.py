@@ -50,9 +50,6 @@ class AnnouncementDetail(APIView):
                     "_id": id
                 },
             )
-            # if len(response_json['data']) == 0:
-            #     return Response(
-            #         status=status.HTTP_404_NOT_FOUND)
             return Response(response_json)
 
         except Exception as e:
@@ -109,10 +106,14 @@ class AnnouncementDetail(APIView):
                     'member_type', announcement['member_type'])
                 announcement['created_by'] = body.get(
                     'created_by', announcement['created_by'])
-                announcement['company_id'] = body.get(
-                    'company_id', announcement['company_id'])
+                announcement['org_id'] = body.get(
+                    'org_id', announcement['org_id'])
                 announcement['created_at_position'] = body.get(
                     'created_at_position', announcement['created_at_position'])
+                announcement['title'] = body.get(
+                    'title', announcement['title'])
+                announcement['org_name'] = body.get(
+                    'org_name', announcement['org_name'])
 
                 response = AnnouncementSerializer.patch(
                     id, announcement)
