@@ -17,7 +17,8 @@ class AnnouncementSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             validated_data['created_at'] = datetime.utcnow().isoformat()
-            validated_data['is_Active'] = True
+            validated_data['is_active'] = True
+            validated_data['deleted'] = False
             response = save_document(
                 collection=ANNOUNCEMENT_COLLECTION,
                 value=validated_data,
