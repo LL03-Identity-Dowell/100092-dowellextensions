@@ -127,6 +127,8 @@ class AnnouncementDetail(APIView):
                     'title', announcement['title'])
                 announcement['org_name'] = body.get(
                     'org_name', announcement['org_name'])
+                announcement['image_url'] = body.get(
+                    'image_url', announcement['image_url'])
 
                 response = AnnouncementSerializer.patch(
                     id, announcement)
