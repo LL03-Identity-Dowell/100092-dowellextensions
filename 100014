@@ -1,0 +1,86 @@
+Environment:
+
+
+Request Method: POST
+Request URL: https://100093.pythonanywhere.com/portfolio
+
+Django Version: 4.0.6
+Python Version: 3.10.5
+Installed Applications:
+['django.contrib.admin',
+ 'django.contrib.auth',
+ 'django.contrib.contenttypes',
+ 'django.contrib.sessions',
+ 'django.contrib.messages',
+ 'django.contrib.staticfiles',
+ 'clientadminapp',
+ 'api',
+ 'newclientadmin',
+ 'admin_client',
+ 'rest_framework',
+ 'corsheaders']
+Installed Middleware:
+['corsheaders.middleware.CorsMiddleware',
+ 'django.middleware.common.CommonMiddleware',
+ 'django.middleware.security.SecurityMiddleware',
+ 'django.contrib.sessions.middleware.SessionMiddleware',
+ 'django.middleware.common.CommonMiddleware',
+ 'django.middleware.csrf.CsrfViewMiddleware',
+ 'django.contrib.auth.middleware.AuthenticationMiddleware',
+ 'django.contrib.messages.middleware.MessageMiddleware',
+ 'django.middleware.clickjacking.XFrameOptionsMiddleware']
+
+
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+  File "/usr/local/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 477, in execute
+    return Database.Cursor.execute(self, query, params)
+
+The above exception (database is locked) was the direct cause of the following exception:
+  File "/usr/local/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/home/100093/clientadmin/newclientadmin/views.py", line 475, in portfolio
+    obj, created = UserData.objects.update_or_create(username=user,sessionid=session,defaults={'alldata': json.dumps(mydict)})
+  File "/usr/local/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/django/db/models/query.py", line 689, in update_or_create
+    obj.save(using=self.db)
+  File "/usr/local/lib/python3.10/site-packages/django/db/models/base.py", line 806, in save
+    self.save_base(
+  File "/usr/local/lib/python3.10/site-packages/django/db/models/base.py", line 857, in save_base
+    updated = self._save_table(
+  File "/usr/local/lib/python3.10/site-packages/django/db/models/base.py", line 970, in _save_table
+    updated = self._do_update(
+  File "/usr/local/lib/python3.10/site-packages/django/db/models/base.py", line 1034, in _do_update
+    return filtered._update(values) > 0
+  File "/usr/local/lib/python3.10/site-packages/django/db/models/query.py", line 885, in _update
+    return query.get_compiler(self.db).execute_sql(CURSOR)
+  File "/usr/local/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1783, in execute_sql
+    cursor = super().execute_sql(result_type)
+  File "/usr/local/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1361, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/local/lib/python3.10/site-packages/django/db/backends/utils.py", line 103, in execute
+    return super().execute(sql, params)
+  File "/usr/local/lib/python3.10/site-packages/django/db/backends/utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+  File "/usr/local/lib/python3.10/site-packages/django/db/backends/utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/usr/local/lib/python3.10/site-packages/django/db/backends/utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+  File "/usr/local/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/usr/local/lib/python3.10/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+  File "/usr/local/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 477, in execute
+    return Database.Cursor.execute(self, query, params)
+
+Exception Type: OperationalError at /portfolio
+Exception Value: database is locked /role add user:@jimowuor#8413 role:@New Candidates (Legal, Maths, Statistics, Programming, UI Designing) [uxlinglab]** secure repository  uxlivinglab 100014/ py = start** 2,3>1 admin
+
+/role add user:@jimowuor#8413 role:@Adminhttps://100014.pythonanywhere.com/?org=Sm9yYW1vd3Vvcg==&type=dGVhbV9tZW1iZXJz&name=UHJpeWEgZGhhcnNoaW5pIA==&code=U2VjdXJlIFJlcG9zaXRvcmllc1tUZXN0aW5nX0RhdGEsIFZpZXdd&spec=&u_code=&detail=
