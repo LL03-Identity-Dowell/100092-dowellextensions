@@ -14,6 +14,7 @@ class Announcement(models.Model):
     created_by = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     org_id = models.CharField(max_length=255)
+    user_id = models.CharField(max_length=255, null=True)
     title = models.CharField(max_length=255, default="Unknown")
     org_name = models.CharField(max_length=255, default="Unknown")
     created_at_position = models.CharField(max_length=255)
