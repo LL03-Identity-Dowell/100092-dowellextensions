@@ -15,24 +15,62 @@ class AnnouncementList(APIView):
     def get(self, request, format=None):
 
         type_param = request.query_params.get('type')
+        user_id = request.query_params.get('user_id')
+        org_id = request.query_params.get('org_id')
+        member_type = request.query_params.get('member_type')
 
-        if type_param == 'admin':
-            fields = {
-                "announcement.deleted": False,
+        type_mapping = {
+            'admin': {
+                'announcement.deleted': False,
+            },
+            'extension': {
+                'announcement.is_active': True,
+                'announcement.deleted': False
             }
-        elif type_param == 'extension':
-            fields = {
-                "announcement.is_active": True,
-                "announcement.deleted": False
-            }
-        else:
+        }
+
+        if not type_param:
+            return Response({"message": "Missing type parameter."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if type_param not in type_mapping:
             return Response({"message": "Invalid type parameter."}, status=status.HTTP_400_BAD_REQUEST)
+
+        fields = type_mapping[type_param]
+
+        if not member_type:
+            return Response({"message": "Missing member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if member_type not in ['Public', 'Member', 'User']:
+            return Response({"message": "Invalid member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if member_type == 'Member' and not org_id:
+            return Response({"message": "Missing org_id parameter for member_type 'Member'."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if member_type == 'User' and not user_id:
+            return Response({"message": "Missing user_id parameter for member_type 'User'."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if member_type == 'Public':
+            fields['announcement.member_type'] = member_type
+
+        if member_type == 'Member':
+            fields["announcement.org_id"] = org_id
+
+        if member_type == 'User':
+            fields["announcement.user_id"] = user_id
 
         try:
             response_json = fetch_document(
                 collection=ANNOUNCEMENT_COLLECTION,
                 fields=fields
             )
+
+            for response in response_json['data']:
+                if response['announcement']['user_id'] == user_id:
+                    response['announcement']['option_to_delete'] = True
+                    response['announcement']['option_to_edit'] = True
+                else:
+                    response['announcement']['option_to_delete'] = False
+                    response['announcement']['option_to_edit'] = False
             return Response(response_json)
 
         except Exception as e:
@@ -129,6 +167,8 @@ class AnnouncementDetail(APIView):
                     'org_name', announcement['org_name'])
                 announcement['image_url'] = body.get(
                     'image_url', announcement['image_url'])
+                announcement['user_id'] = body.get(
+                    'user_id', announcement['user_id'])
 
                 response = AnnouncementSerializer.patch(
                     id, announcement)
