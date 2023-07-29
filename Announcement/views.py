@@ -65,7 +65,7 @@ class AnnouncementList(APIView):
             )
 
             for response in response_json['data']:
-                if response['announcement']['user_id'] == user_id:
+                if "user_id" in response['announcement'] and response['announcement']['user_id'] == user_id:
                     response['announcement']['option_to_delete'] = True
                     response['announcement']['option_to_edit'] = True
                 else:
