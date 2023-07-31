@@ -166,12 +166,9 @@ class AnnouncementDetail(APIView):
                     'product', announcement['product'])
                 announcement['member_type'] = body.get(
                     'member_type', announcement['member_type'])
-                announcement['org_id'] = body.get(
-                    'org_id', announcement['org_id'])
                 announcement['title'] = body.get(
                     'title', announcement['title'])
-                announcement['org_name'] = body.get(
-                    'org_name', announcement['org_name'])
+                
                 if "image_url" in announcement:
                     announcement['image_url'] = body.get('image_url', announcement['image_url'])
                 else:
