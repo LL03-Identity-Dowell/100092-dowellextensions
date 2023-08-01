@@ -38,36 +38,37 @@ class AnnouncementList(APIView):
 
         if type_param not in type_mapping:
             return Response({"message": "Invalid type parameter."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         if not user_id:
             return Response({"message": "Missing user_id parameter."}, status=status.HTTP_400_BAD_REQUEST)
 
-        
+        fields = type_mapping[type_param]
+
         # Get query filter
-        if type_param == "my-channel-history":
-            fields = type_mapping[type_param]
-        else:
+        # if type_param == "my-channel-history":
+        #     fields = type_mapping[type_param]
+        # else:
 
-            if not member_type:
-                return Response({"message": "Missing member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
+        if not member_type:
+            return Response({"message": "Missing member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
 
-            if member_type not in ['Public', 'Member', 'User']:
-                return Response({"message": "Invalid member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
+        if member_type not in ['Public', 'Member', 'User']:
+            return Response({"message": "Invalid member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
 
-            if member_type == 'Member' and not org_id:
-                return Response({"message": "Missing org_id parameter for member_type 'Member'."}, status=status.HTTP_400_BAD_REQUEST)
+        if member_type == 'Member' and not org_id:
+            return Response({"message": "Missing org_id parameter for member_type 'Member'."}, status=status.HTTP_400_BAD_REQUEST)
 
-            if member_type == 'User' and not user_id:
-                return Response({"message": "Missing user_id parameter for member_type 'User'."}, status=status.HTTP_400_BAD_REQUEST)
-            
-            if member_type == 'Public':
-                fields['announcement.member_type'] = member_type
+        if member_type == 'User' and not user_id:
+            return Response({"message": "Missing user_id parameter for member_type 'User'."}, status=status.HTTP_400_BAD_REQUEST)
 
-            if member_type == 'Member':
-                fields["announcement.org_id"] = org_id
+        if member_type == 'Public':
+            fields['announcement.member_type'] = member_type
 
-            if member_type == 'User':
-                fields["announcement.user_id"] = user_id
+        if member_type == 'Member':
+            fields["announcement.org_id"] = org_id
+
+        if member_type == 'User':
+            fields["announcement.user_id"] = user_id
 
         try:
             response_json = fetch_document(
@@ -168,9 +169,10 @@ class AnnouncementDetail(APIView):
                     'member_type', announcement['member_type'])
                 announcement['title'] = body.get(
                     'title', announcement['title'])
-                
+
                 if "image_url" in announcement:
-                    announcement['image_url'] = body.get('image_url', announcement['image_url'])
+                    announcement['image_url'] = body.get(
+                        'image_url', announcement['image_url'])
                 else:
                     announcement['image_url'] = body.get('image_url', None)
                 response = AnnouncementSerializer.patch(
