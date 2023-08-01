@@ -44,11 +44,6 @@ class AnnouncementList(APIView):
 
         fields = type_mapping[type_param]
 
-        # Get query filter
-        # if type_param == "my-channel-history":
-        #     fields = type_mapping[type_param]
-        # else:
-
         if not member_type:
             return Response({"message": "Missing member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -69,6 +64,9 @@ class AnnouncementList(APIView):
 
         if member_type == 'User':
             fields["announcement.user_id"] = user_id
+
+        if type_param == "my-channel-history":
+            fields = type_mapping[type_param]
 
         try:
             response_json = fetch_document(
