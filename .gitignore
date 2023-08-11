@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+/notifications/migrations/*
+/media/*
+/favourite/migrations/*
+db.sqlite3
+
+ProjectVenv
