@@ -163,6 +163,7 @@ class AnnouncementDetail(APIView):
                     'description', announcement['description'])
                 announcement['product'] = body.get(
                     'product', announcement['product'])
+                
                 announcement['member_type'] = body.get(
                     'member_type', announcement['member_type'])
                 announcement['title'] = body.get(
@@ -173,6 +174,13 @@ class AnnouncementDetail(APIView):
                         'image_url', announcement['image_url'])
                 else:
                     announcement['image_url'] = body.get('image_url', None)
+
+                if "product_id" in announcement:
+                    announcement['product_id'] = body.get(
+                        'product_id', announcement['product_id'])
+                else:
+                    announcement['product_id'] = body.get('product_id', None)
+
                 response = AnnouncementSerializer.patch(
                     id, announcement)
 
