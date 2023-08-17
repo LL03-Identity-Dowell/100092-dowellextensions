@@ -8,7 +8,7 @@ class Announcement(models.Model):
         ('User', 'User'),
     )
     member_type = models.CharField(max_length=10, choices=MEMBER_TYPE_CHOICES)
-    description = models.CharField(max_length=255)
+    description = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
     product = models.CharField(max_length=255, null=False)
     product_id = models.CharField(max_length=255, null=False)
