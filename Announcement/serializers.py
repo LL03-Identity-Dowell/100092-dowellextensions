@@ -42,3 +42,5 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         except Exception as e:
             logger.info(f"Announcement Not Saved: ({e})")
             raise ValueError(f"Announcement Not Saved: ({e})")
+        
+

@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import health, delete_all
+from .views import health
 
 
 app_name = "healthcheck"
