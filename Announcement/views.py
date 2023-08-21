@@ -75,13 +75,29 @@ class AnnouncementList(APIView):
                 fields=fields
             )
 
+
+            # serializer = AnnouncementSerializer(response_json)
             for response in response_json['data']:
+                announcement = response['announcement']
+                if "link" in announcement:
+                    pass
+                else:
+                    announcement['link'] = None
+                if "image_url" in announcement:
+                    pass
+                else:
+                    announcement['link'] = None
+
                 if "user_id" in response['announcement'] and response['announcement']['user_id'] == user_id:
                     response['announcement']['option_to_delete'] = True
                     response['announcement']['option_to_edit'] = True
                 else:
                     response['announcement']['option_to_delete'] = False
                     response['announcement']['option_to_edit'] = False
+                if "link" in response["announcement"]:
+                    pass
+                else:
+                    response['announcement']['link'] = None
             return Response(response_json)
 
         except Exception as e:
@@ -112,6 +128,18 @@ class AnnouncementDetail(APIView):
                     "_id": id
                 },
             )
+            if response_json["isSuccess"] and response_json['data']:
+                announcement = response_json["data"][0]['announcement']
+                if "link" in announcement:
+                    pass
+                else:
+                    announcement['link'] = None
+                if "image_url" in announcement:
+                    pass
+                else:
+                    announcement['link'] = None
+
+
             return Response(response_json)
 
         except Exception as e:

@@ -11,7 +11,13 @@ import datetime
 
 
 class AnnouncementSerializer(serializers.Serializer):
-    member_type = serializers.CharField(max_length=20,required = True)
+    MEMBER_TYPE_CHOICES = (
+        ('Public', 'Public'),
+        ('Member', 'Member'),
+        ('User', 'User'),
+    )
+
+    member_type = serializers.ChoiceField(MEMBER_TYPE_CHOICES,required = True)
     description = serializers.CharField(max_length=2028,required = True)
     product  = serializers.CharField(max_length=255,required=True)
     product_id = serializers.CharField(max_length=255,required=True)
