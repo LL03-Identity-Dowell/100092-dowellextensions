@@ -21,3 +21,4 @@ class Announcement(models.Model):
     created_at_position = models.CharField(max_length=255)
     deleted = models.BooleanField(default=False)
     image_url = models.CharField(max_length=255, null=True, blank=True)
+    link = models.CharField(max_length=500)

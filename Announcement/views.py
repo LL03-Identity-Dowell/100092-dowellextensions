@@ -182,6 +182,11 @@ class AnnouncementDetail(APIView):
                 else:
                     announcement['product_id'] = body.get('product_id', None)
 
+                if "link" in announcement:
+                    announcement['link'] = body.get('link',announcement['link'])
+                else:
+                    announcement['link'] = body.get('link',None)
+
                 response = AnnouncementSerializer.patch(
                     id, announcement)
 

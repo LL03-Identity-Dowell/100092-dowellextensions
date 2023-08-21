@@ -7,12 +7,22 @@ from utils.dowell_db_call import (
     update_document,
     ANNOUNCEMENT_COLLECTION
 )
+import datetime
 
 
-class AnnouncementSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Announcement
-        fields = '__all__'
+class AnnouncementSerializer(serializers.Serializer):
+    member_type = serializers.CharField(max_length=20,required = True)
+    description = serializers.CharField(max_length=2028,required = True)
+    product  = serializers.CharField(max_length=255,required=True)
+    product_id = serializers.CharField(max_length=255,required=True)
+    created_by = serializers.CharField(max_length=255,required = True)
+    org_id = serializers.CharField(max_length=255,required = True)
+    user_id = serializers.CharField(max_length=255,required = True)
+    title = serializers.CharField(max_length=255,required = True)
+    org_name = serializers.CharField(max_length=255,required = True)
+    created_at_position = serializers.CharField(max_length=255,required = True)
+    image_url = serializers.CharField(max_length=255,required = False)
+    link = serializers.CharField(max_length=500,required = False)
 
     def create(self, validated_data):
         try:
