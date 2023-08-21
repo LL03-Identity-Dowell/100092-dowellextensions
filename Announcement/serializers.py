@@ -27,8 +27,8 @@ class AnnouncementSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255,required = True)
     org_name = serializers.CharField(max_length=255,required = True)
     created_at_position = serializers.CharField(max_length=255,required = True)
-    image_url = serializers.CharField(max_length=255,required = False)
-    link = serializers.CharField(max_length=500,required = False)
+    image_url = serializers.CharField(max_length=255,required = False, allow_blank=True)
+    link = serializers.CharField(max_length=500,required = False, allow_blank=True)
 
     def create(self, validated_data):
         try:
