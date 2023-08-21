@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from .models import Announcement
 from utils.general import logger
 from datetime import datetime
 from utils.dowell_db_call import (
@@ -7,7 +6,6 @@ from utils.dowell_db_call import (
     update_document,
     ANNOUNCEMENT_COLLECTION
 )
-import datetime
 
 
 class AnnouncementSerializer(serializers.Serializer):
@@ -27,7 +25,7 @@ class AnnouncementSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255,required = True)
     org_name = serializers.CharField(max_length=255,required = True)
     created_at_position = serializers.CharField(max_length=255,required = True)
-    image_url = serializers.CharField(max_length=255,required = False, allow_blank=True)
+    image_url = serializers.URLField(required = False, allow_blank=True)
     link = serializers.CharField(max_length=500,required = False, allow_blank=True)
 
     def create(self, validated_data):
