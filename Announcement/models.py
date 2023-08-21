@@ -8,7 +8,7 @@ class Announcement(models.Model):
         ('User', 'User'),
     )
     member_type = models.CharField(max_length=10, choices=MEMBER_TYPE_CHOICES)
-    description = models.TextField(max_length=500)
+    description = models.TextField(max_length=2028)
     created_at = models.DateTimeField(auto_now_add=True)
     product = models.CharField(max_length=255, null=False)
     product_id = models.CharField(max_length=255, null=False)
@@ -21,3 +21,4 @@ class Announcement(models.Model):
     created_at_position = models.CharField(max_length=255)
     deleted = models.BooleanField(default=False)
     image_url = models.CharField(max_length=255, null=True, blank=True)
+    link = models.CharField(max_length=500)

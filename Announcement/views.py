@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from .serializers import AnnouncementSerializer
 from utils.general import logger
 from rest_framework import status
+from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.views import APIView
 from utils.dowell_db_call import (
     fetch_document,
@@ -74,13 +75,29 @@ class AnnouncementList(APIView):
                 fields=fields
             )
 
+
+            # serializer = AnnouncementSerializer(response_json)
             for response in response_json['data']:
+                announcement = response['announcement']
+                if "link" in announcement:
+                    pass
+                else:
+                    announcement['link'] = None
+                if "image_url" in announcement:
+                    pass
+                else:
+                    announcement['link'] = None
+
                 if "user_id" in response['announcement'] and response['announcement']['user_id'] == user_id:
                     response['announcement']['option_to_delete'] = True
                     response['announcement']['option_to_edit'] = True
                 else:
                     response['announcement']['option_to_delete'] = False
                     response['announcement']['option_to_edit'] = False
+                if "link" in response["announcement"]:
+                    pass
+                else:
+                    response['announcement']['link'] = None
             return Response(response_json)
 
         except Exception as e:
@@ -111,6 +128,18 @@ class AnnouncementDetail(APIView):
                     "_id": id
                 },
             )
+            if response_json["isSuccess"] and response_json['data']:
+                announcement = response_json["data"][0]['announcement']
+                if "link" in announcement:
+                    pass
+                else:
+                    announcement['link'] = None
+                if "image_url" in announcement:
+                    pass
+                else:
+                    announcement['link'] = None
+
+
             return Response(response_json)
 
         except Exception as e:
@@ -181,6 +210,11 @@ class AnnouncementDetail(APIView):
                 else:
                     announcement['product_id'] = body.get('product_id', None)
 
+                if "link" in announcement:
+                    announcement['link'] = body.get('link',announcement['link'])
+                else:
+                    announcement['link'] = body.get('link',None)
+
                 response = AnnouncementSerializer.patch(
                     id, announcement)
 
@@ -224,3 +258,32 @@ class AnnouncementDetail(APIView):
             print(e)
             logger.error(str(e))
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(('DELETE',))
+def delete_all(request):
+    member_type = request.query_params.get('member_type')
+    if member_type not in ['Public','Member','User']:
+        print(member_type)
+        return Response({"message": "Invalid member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        responses = fetch_document(
+            collection=ANNOUNCEMENT_COLLECTION,
+            fields={
+                'announcement.member_type':member_type
+            }
+        )
+    
+        for response in responses['data']:
+            id = response["_id"]
+            announcement = response['announcement']
+            announcement['deleted'] = True
+            response = AnnouncementSerializer.patch(
+                id,
+                announcement)
+        return Response(responses, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Bad Request, {str(e)}")
+        return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
