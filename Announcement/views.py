@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from .serializers import AnnouncementSerializer
+from .serializers import AnnouncementSerializer, AnnouncementListSerializer, AnnouncementRestoreSerializer
 from utils.general import logger
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
@@ -10,71 +10,19 @@ from utils.dowell_db_call import (
 )
 import json
 
-
 class AnnouncementList(APIView):
-
     def get(self, request, format=None):
-
-        type_param = request.query_params.get('type')
-        user_id = request.query_params.get('user_id')
-        org_id = request.query_params.get('org_id')
-        member_type = request.query_params.get('member_type')
-
-        type_mapping = {
-            'admin': {
-                'announcement.deleted': False,
-            },
-            'my-channel-history': {
-                'announcement.deleted': False,
-                'announcement.user_id': user_id
-            },
-            'extension': {
-                'announcement.is_active': True,
-                'announcement.deleted': False
-            }
-        }
-
-        if not type_param:
-            return Response({"message": "Missing type parameter."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if type_param not in type_mapping:
-            return Response({"message": "Invalid type parameter."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not user_id:
-            return Response({"message": "Missing user_id parameter."}, status=status.HTTP_400_BAD_REQUEST)
-
-        fields = type_mapping[type_param]
-
-        if not member_type:
-            return Response({"message": "Missing member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if member_type not in ['Public', 'Member', 'User']:
-            return Response({"message": "Invalid member_type parameter."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if member_type == 'Member' and not org_id:
-            return Response({"message": "Missing org_id parameter for member_type 'Member'."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if member_type == 'User' and not user_id:
-            return Response({"message": "Missing user_id parameter for member_type 'User'."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if member_type == 'Public':
-            fields['announcement.member_type'] = member_type
-
-        if member_type == 'Member':
-            fields["announcement.org_id"] = org_id
-
-        if member_type == 'User':
-            fields["announcement.user_id"] = user_id
-
-        if type_param == "my-channel-history":
-            fields = type_mapping[type_param]
+        serializer = AnnouncementListSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
 
         try:
+            fields = serializer.validated_data['fields']
             response_json = fetch_document(
                 collection=ANNOUNCEMENT_COLLECTION,
                 fields=fields
             )
-            # serializer = AnnouncementSerializer(response_json)
+
+            user_id = serializer.validated_data['user_id']
             for response in response_json['data']:
                 if "user_id" in response['announcement'] and response['announcement']['user_id'] == user_id:
                     response['announcement']['option_to_delete'] = True
@@ -82,6 +30,7 @@ class AnnouncementList(APIView):
                 else:
                     response['announcement']['option_to_delete'] = False
                     response['announcement']['option_to_edit'] = False
+
             return Response(response_json)
 
         except Exception as e:
@@ -101,6 +50,8 @@ class AnnouncementList(APIView):
         except Exception as e:
             logger.error(str(e))
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 
 class AnnouncementDetail(APIView):
@@ -160,6 +111,7 @@ class AnnouncementDetail(APIView):
 
             if response["isSuccess"] and response['data']:
                 announcement = response["data"][0]['announcement']
+                #serializer should take announcement
                 announcement['description'] = body.get(
                     'description', announcement['description'])
                 announcement['product'] = body.get(
@@ -258,4 +210,28 @@ def delete_all(request):
     except Exception as e:
         logger.error(f"Bad Request, {str(e)}")
         return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+@api_view(("PUT",))        
+def restore_announcements(request):
+    serializer = AnnouncementRestoreSerializer(data=request.query_params)
+    serializer.is_valid(raise_exception=True)
+    try:
+        fields = serializer.validated_data["fields"]
+        responses = fetch_document(
+            collection=ANNOUNCEMENT_COLLECTION,
+            fields=fields
+        )
+        for response in responses['data']:
+            id = response["_id"]
+            announcement = response['announcement']
+            announcement['deleted'] = False
+            response = AnnouncementSerializer.patch(
+                id,
+                announcement)
+        return Response(responses, status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error(f"Bad Request, {str(e)}")
+        return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
