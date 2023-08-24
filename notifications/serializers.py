@@ -8,10 +8,21 @@ from utils.dowell_db_call import (
     NOTIFICATION_COLLECTION
     )
 
-class ProductNotificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductNotification
-        fields = '__all__'
+class ProductNotificationSerializer(serializers.Serializer):
+    created_by = serializers.CharField(max_length=300)
+    org_name = serializers.CharField(max_length=300)
+    org_id = serializers.CharField(max_length=255)
+    product = serializers.CharField(max_length=300)
+    portfolio = serializers.CharField(max_length=300)
+    product_name = serializers.CharField(max_length=300)
+    title = serializers.CharField(max_length=500)
+    message = serializers.CharField(max_length=500)
+
+    #required can be set to false
+    link = serializers.CharField(max_length=2048)
+    duration = serializers.CharField(max_length=300)
+    button_status = serializers.CharField(max_length=300)
+
 
     def create(self, validated_data):
         try:
@@ -66,10 +77,19 @@ class ProductNotificationSerializer(serializers.ModelSerializer):
     
 
 
-class NotificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Notification
-        fields = '__all__'
+class NotificationSerializer(serializers.Serializer):
+    data_type = serializers.CharField(max_length=255)
+    user_type = serializers.CharField(max_length=255)
+    from_field = serializers.CharField(max_length=255)
+    to = serializers.CharField(max_length=255)
+    desc = serializers.CharField()
+    meant_for = serializers.CharField(max_length=255)
+    type_of_notification = serializers.CharField(max_length=255)
+    created_by = serializers.CharField(max_length=300)
+    org_name = serializers.CharField(max_length=300)
+    org_id = serializers.CharField(max_length=255)
+
+
 
     def create(self, validated_data):
         try:
