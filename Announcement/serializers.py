@@ -63,7 +63,7 @@ class AnnouncementListSerializer(serializers.Serializer):
     type = serializers.ChoiceField(
         choices=['admin', 'my-channel-history', 'extension'])
     user_id = serializers.CharField()
-    org_id = serializers.IntegerField(required=False)
+    org_id = serializers.CharField(required=False)
     member_type = serializers.ChoiceField(choices=['Public', 'Member', 'User'])
 
     def validate(self, data):
@@ -95,6 +95,10 @@ class AnnouncementListSerializer(serializers.Serializer):
 
         if data['member_type'] == 'Public':
             type_mapping[data['type']]['announcement.member_type'] = 'Public'
+        elif data['member_type'] == 'Member':
+            type_mapping[data['type']]['announcement.member_type'] = 'Member'
+        elif data['member_type'] == 'User':
+            type_mapping[data['type']]['announcement.member_type'] = 'User'
 
         if data['member_type'] == 'Member':
             type_mapping[data['type']]['announcement.org_id'] = data['org_id']
