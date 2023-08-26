@@ -56,5 +56,77 @@ class AnnouncementSerializer(serializers.Serializer):
         except Exception as e:
             logger.info(f"Announcement Not Saved: ({e})")
             raise ValueError(f"Announcement Not Saved: ({e})")
-        
 
+
+
+class AnnouncementListSerializer(serializers.Serializer):
+    type = serializers.ChoiceField(
+        choices=['admin', 'my-channel-history', 'extension'])
+    user_id = serializers.CharField()
+    org_id = serializers.CharField(required=False)
+    member_type = serializers.ChoiceField(choices=['Public', 'Member', 'User'])
+
+    def validate(self, data):
+        type_mapping = {
+            'admin': {
+                'announcement.deleted': False,
+            },
+            'my-channel-history': {
+                'announcement.deleted': False,
+                'announcement.user_id': data['user_id']
+            },
+            'extension': {
+                'announcement.is_active': True,
+                'announcement.deleted': False
+            }
+        }
+
+        if data['type'] not in type_mapping:
+            raise serializers.ValidationError(
+                {"message": "Invalid type parameter."})
+
+        if data['member_type'] == 'Member' and not data.get('org_id'):
+            raise serializers.ValidationError(
+                {"message": "Missing org_id parameter for member_type 'Member'."})
+
+        if data['member_type'] == 'User' and not data.get('user_id'):
+            raise serializers.ValidationError(
+                {"message": "Missing user_id parameter for member_type 'User'."})
+
+        if data['member_type'] == 'Public':
+            type_mapping[data['type']]['announcement.member_type'] = 'Public'
+        elif data['member_type'] == 'Member':
+            type_mapping[data['type']]['announcement.member_type'] = 'Member'
+        elif data['member_type'] == 'User':
+            type_mapping[data['type']]['announcement.member_type'] = 'User'
+
+        if data['member_type'] == 'Member':
+            type_mapping[data['type']]['announcement.org_id'] = data['org_id']
+
+        if data['member_type'] == 'User':
+            type_mapping[data['type']
+                         ]['announcement.user_id'] = data['user_id']
+
+        data['fields'] = type_mapping[data['type']]
+        return data
+    
+
+class AnnouncementRestoreSerializer(serializers.Serializer):
+    org_id = serializers.CharField(required=False)
+    member_type = serializers.ChoiceField(choices=['Public', 'Member', 'User'])
+    def validate(self,data):
+        fields = {}
+        if not data["org_id"]:
+            raise serializers.ValidationError(
+                {"message":"Missing parameter 'org_id' "}
+                )
+        fields["announcement.org_id"]=data["org_id"]
+
+        if data["member_type"] not in ['Public','Member','User']:
+            raise serializers.ValidationError(
+                {"message":"Invalid parameter 'member_type' "}
+            )
+        fields["announcement.member_type"]=data["member_type"]
+
+        data["fields"] = fields  
+        return data
