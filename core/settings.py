@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'healthcheck',
     "notifications",
     "favourite",
-    "Announcement"
+    "Announcement",
+    "dowellgroup"
 ]
 
 MIDDLEWARE = [
