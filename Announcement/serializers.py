@@ -97,15 +97,15 @@ class AnnouncementListSerializer(serializers.Serializer):
             type_mapping[data['type']]['announcement.member_type'] = 'Public'
         elif data['member_type'] == 'Member':
             type_mapping[data['type']]['announcement.member_type'] = 'Member'
-        elif data['member_type'] == 'User':
+        elif data['member_type'] == 'User' and data['type'] in ['admin', 'extension']:
             type_mapping[data['type']]['announcement.member_type'] = 'User'
 
         if data['member_type'] == 'Member':
             type_mapping[data['type']]['announcement.org_id'] = data['org_id']
 
         if data['member_type'] == 'User':
-            type_mapping[data['type']
-                         ]['announcement.user_id'] = data['user_id']
+            type_mapping[data['type']]['announcement.user_id'] = data['user_id']
+
 
         data['fields'] = type_mapping[data['type']]
         return data
