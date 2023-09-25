@@ -33,26 +33,28 @@ class DowellGroupList(APIView):
 
     def post(self, request):
         try:
+
             org_name = request.data.get('org_name')
             org_id = request.data.get('org_id')
             user_id = request.data.get('user_id')
             created_by = request.data.get('created_by')
-            org_id = request.data.get('org_id')
             created_at_position = request.data.get('created_at_position')
-            email_list = request.data.get('email_list')
+            email_list = request.data.get('email_list').split(",")
             csv_file = request.data.get('csv_file')
-
-            data = {
-                'org_name': org_name,
-                'org_id': org_id,
-                'user_id': user_id,
-                'created_by': created_by,
-                'created_at_position': created_at_position,
-                'email_list': email_list
-            }
+            group_name = request.data.get('group_name')
+            group_detail = []
 
             if not csv_file:
-                data['group_detail'] = []
+                data = {
+                    'org_name': org_name,
+                    'org_id': org_id,
+                    'user_id': user_id,
+                    'created_by': created_by,
+                    'created_at_position': created_at_position,
+                    'email_list': email_list,
+                    'group_name': group_name,
+                    'group_detail': []
+                }
             else:
                 group_detail = []
                 try:
@@ -71,7 +73,6 @@ class DowellGroupList(APIView):
                         email = row[3]
 
                         groupData = {
-                            "group_name": group_name,
                             "location": location,
                             "website": website,
                             "meter": meter,
@@ -82,11 +83,19 @@ class DowellGroupList(APIView):
                             "email": email
                         }
                         group_detail.append(groupData)
+                    data = {
+                        'org_name': org_name,
+                        'org_id': org_id,
+                        'user_id': user_id,
+                        'created_by': created_by,
+                        'created_at_position': created_at_position,
+                        'email_list': email_list,
+                        'group_name': group_name,
+                        'group_detail': group_detail
+                    }
                 except IndexError:
                     return Response({'error': 'Invalid data format in CSV file.'}, status=status.HTTP_400_BAD_REQUEST)
 
-                data['group_detail'] = group_detail
-                data['group_name'] = group_detail[0]['group_name']
             serializer = DowellGroupSerializer(data=data)
             if serializer.is_valid():
                 response = serializer.save()

@@ -9,7 +9,7 @@ from utils.dowell_db_call import (
 
 
 class DowellGroupSerializer(serializers.Serializer):
-    # group_name = serializers.CharField(max_length=255, required=True)
+    group_name = serializers.CharField(max_length=255, required=True)
     user_id = serializers.CharField(max_length=255, required=True)
     created_by = serializers.CharField(max_length=255, required=True)
     org_id = serializers.CharField(max_length=255, required=True)
