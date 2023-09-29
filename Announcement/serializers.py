@@ -11,7 +11,7 @@ from utils.dowell_db_call import (
 class AnnouncementSerializer(serializers.Serializer):
     MEMBER_TYPE_CHOICES = (
         ('Public', 'Public'),
-        ('Member', 'Member'),
+        ('Member', 'Member'), 
         ('User', 'User'),
     )
 

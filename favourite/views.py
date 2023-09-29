@@ -8,28 +8,47 @@ from .models import *
 from .serializers import *
 from rest_framework.views import APIView
 import imghdr
+from utils.general import logger
+from utils.dowell_db_call import (
+    fetch_document,
+    FAVORITE_COLLECTION
+)
+import json
 
 
 class FavouritesView(APIView):
     def get(self,request, username):
-        # username = request.data.get('username', None)
-        if username:
-            try:
-                favourites = favourite.objects.filter(username = username)
-                serializer = favouriteSerializer(favourites, many=True)
-                return Response(serializer.data)
-            except favourite.DoesNotExist:
-                return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'message': 'all fields required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            response = fetch_document(
+                FAVORITE_COLLECTION,
+                fields={
+                    "username":username
+            })
+        
+            return Response(response)
+        except Exception as e:
+            logger.error(f"Favorite not found, {str(e)}")
+            Response(
+                {"message": f"Favorite not found, {str(e)}"},
+                status=status.HTTP_404_NOT_FOUND)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class setasfavourite(APIView):
     def get_object(self, pk):
         try:
-            return favourite.objects.get(pk=pk)
-        except favourite.DoesNotExist:
-            return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
+            response = fetch_document(
+                FAVORITE_COLLECTION,
+                fields={
+                    "_id":pk
+            })
+            return Response(response)
+
+        except Exception as e:
+            logger.error(f"Favorite not found, {str(e)}")
+            Response(
+                {"message": f"Favorite not found, {str(e)}"},
+                status=status.HTTP_404_NOT_FOUND)
     def post(self, request):
         data = request.data.copy()
         if 'image' in data and data['image']:
@@ -98,7 +117,7 @@ class FavouriteImageView(APIView):
     def post(self, request):
         image = request.data.get('image', None)
         username = request.data.get('username', None)
-        session_id = request.data.get('session_id', None)
+        session_id = request.data.get('session_id', None) 
 
         if image and username and session_id:
             if not type(image) == str:
