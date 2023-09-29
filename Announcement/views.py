@@ -21,7 +21,7 @@ class AnnouncementList(APIView):
                 collection=ANNOUNCEMENT_COLLECTION,
                 fields=fields
             )
-
+ 
             user_id = serializer.validated_data['user_id']
             for response in response_json['data']:
                 if "user_id" in response['announcement'] and response['announcement']['user_id'] == user_id:
