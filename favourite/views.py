@@ -17,12 +17,13 @@ import json
 
 
 class FavouritesView(APIView):
-    def get(self,request, username):
+    def get(self,request, user_id):
         try:
             response = fetch_document(
                 FAVORITE_COLLECTION,
                 fields={
-                    "username":username
+                    "favorite.type":"favorite",
+                    "favorite.user_id":user_id
             })
         
             return Response(response)
