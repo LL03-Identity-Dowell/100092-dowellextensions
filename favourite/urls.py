@@ -6,6 +6,12 @@ urlpatterns = [
     path('favourite/<int:pk>',setasfavourite.as_view()),
     path('favourites/<str:user_id>',FavouritesView.as_view()),
     path('favouriteIcon/',favouriteIcon.as_view()),
+
+    #new endpoints
+    path('v1/favorite/',setasfavourite.as_view()),
+    path('v1/favorites/<int:pk>', setasfavourite.as_view()),
+    path('v1/favorites/<str:user_id>',FavouritesView.as_view()),
+    path('v1/favorites/favourite_icon/',favouriteIcon.as_view()),
     path('v1/favorites/<str:user_id>/images/', FavouriteImageList.as_view()),
     path('v1/favorites/<str:user_id>/images/<str:favorite_img_id>/', FavouriteImageDetail.as_view())
 ]
