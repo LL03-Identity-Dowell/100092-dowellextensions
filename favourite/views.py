@@ -51,58 +51,116 @@ class setasfavourite(APIView):
                 {"message": f"Favorite not found, {str(e)}"},
                 status=status.HTTP_404_NOT_FOUND)
     def post(self, request):
-        data = request.data.copy()
-        if 'image' in data and data['image']:
-            serializer = favouriteSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            product = data['productName']
-            import json
-            # Open the JSON file
-            with open('favourite/favourite.json') as f:
-                # Load the JSON data into a Python dictionary
-                json_data = json.load(f)
-                # print(json_data)
-            # Get the values from the dictionary and put them in a list
-            for i in json_data:
-                if product == i['title']:
-                    image_url = i['image']
-                    print(image_url)
-            data['image_url'] = image_url
-            
- 
-            serializer = favouriteSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        try:
+            data = request.data
+            if 'image' in data and data['image']:
+                serializer = favouriteSerializer(data=data)
+                if serializer.is_valid():
+                    response = serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                product = data['productName']
+                import json
+                # Open the JSON file
+                with open('favourite/favourite.json') as f:
+                    # Load the JSON data into a Python dictionary
+                    json_data = json.load(f)
+                    # print(json_data)
+                # Get the values from the dictionary and put them in a list
+                for i in json_data:
+                    if product == i['title']:
+                        image_url = i['image']
+                        print(image_url)
+                data['image_url'] = image_url
+                
     
-    def get(self, request, format=None):
-        snippets = favourite.objects.all()
-        serializer = favouriteSerializer(snippets, many=True)
-        return Response(serializer.data)
+                serializer = favouriteSerializer(data=data)
+                if serializer.is_valid():
+                    response = serializer.save()
+                    return Response(response, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"Error Setting Favorite ({str(e)})")
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def get(self, format=None):
+        try:
+            response = fetch_document(
+                FAVORITE_COLLECTION,
+                fields={
+                    "favorite.type":"favorite",
+            })
+        
+            return Response(response)
+        except Exception as e:
+            logger.error(f"Bad request, {str(e)}")
+            Response(
+                {"message": f"Bad request, {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        data = request.data
-        snippet.save()
-        serializer = favouriteSerializer(snippet, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(snippet, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            body = json.loads(request.body)
+            response = fetch_document(
+                collection=FAVORITE_COLLECTION,
+                fields={
+                    "_id": pk,
+                    "favorite.deleted": False,
+                    "favorite.type": "favorite"
+                },
+            )
+
+            if response["isSuccess"] and response['data']:
+                favorite = response["data"][0]['favorite']
+                response = favouriteSerializer.update(pk, favorite)
+            else:
+                logger.error(f"Favorite Not Found For {id}")
+                return Response(
+                    {"message": f"Favorite Not Found For {id}"},
+                    status=status.HTTP_404_NOT_FOUND)
+            return Response(response, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            logger.error(str(e))
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # snippet = self.get_object(pk)
+        # data = request.data
+        # snippet.save()
+        # serializer = favouriteSerializer(snippet, data=request.data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data)
+        # return Response(snippet, status=status.HTTP_400_BAD_REQUEST
     
     def delete(self, request, pk, format=None):
         try:
-            snippet = self.get_object(pk)
-            snippet.delete()
-            return Response([],status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response({"message": "no data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            response = fetch_document(
+                collection=FAVORITE_COLLECTION,
+                fields={
+                    "_id": pk,
+                    "favorite.deleted": False,
+                    "favorite.type": "favorite"
+                },
+            )
+
+            if response["isSuccess"] and response['data']:
+                favorite = response["data"][0]['favorite']
+                favorite['deleted'] = not favorite['deleted']
+                response = favouriteSerializer.update(pk, favorite)
+            else:
+                logger.error(f"Favorite Not Found For {id}")
+                return Response(
+                    {"message": f"Favorite Not Found For {id}"},
+                    status=status.HTTP_404_NOT_FOUND)
+            return Response(response, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            logger.error(str(e))
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -171,6 +229,9 @@ class FavouriteImageDetail(APIView):
                 status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, user_id, favorite_img_id, format=None):
+
+        #What fields are expected to be updated???
+
         try:
             body = json.loads(request.body)
             response = fetch_document(
