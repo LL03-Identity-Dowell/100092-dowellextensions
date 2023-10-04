@@ -93,6 +93,37 @@ class Oldfavourite(APIView):
         except:
             return Response({"message": "no data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
  
+@method_decorator(csrf_exempt, name='dispatch') 
+class OldFavouriteImageView(APIView):
+    def post(self, request):
+        image = request.data.get('image', None)
+        username = request.data.get('username', None)
+        session_id = request.data.get('session_id', None)
+
+        if image and username and session_id:
+            if not type(image) == str:
+                image_data = image.read()
+                image_data_base64 = base64.b64encode(image_data)
+                image_data_base64_string = image_data_base64.decode('utf-8')
+                image_format = imghdr.what(None, image_data)
+                image_data_base64_string = f"data:image/{image_format};base64,{image_data_base64_string}"
+                request.data['image'] = image_data_base64_string
+            serializer = ImageSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors,
+                                status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'all fields required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request, username):
+        try:
+            favourites = FavouriteImage.objects.filter(username = username)
+            serializer = ImageSerializer(favourites, many=True)
+            return Response(serializer.data)
+        except favourite.DoesNotExist:
+            return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class FavouritesView(APIView):
