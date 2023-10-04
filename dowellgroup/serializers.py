@@ -22,6 +22,7 @@ class DowellGroupSerializer(serializers.Serializer):
         try:
             validated_data['created_at'] = datetime.utcnow().isoformat()
             validated_data['deleted'] = False
+            validated_data['share_access'] = []
             response = save_document(
                 collection=DOWELL_GROUP_COLLECTION,
                 value=validated_data,
