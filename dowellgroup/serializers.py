@@ -15,14 +15,17 @@ class DowellGroupSerializer(serializers.Serializer):
     org_id = serializers.CharField(max_length=255, required=True)
     org_name = serializers.CharField(max_length=255, required=True)
     created_at_position = serializers.CharField(max_length=255, required=True)
-    email_list = serializers.ListField(required=True)
+    load_from_csv = serializers.BooleanField(default=False)
     group_detail = serializers.ListField(required=True)
 
     def create(self, validated_data):
         try:
             validated_data['created_at'] = datetime.utcnow().isoformat()
             validated_data['deleted'] = False
-            validated_data['share_access'] = []
+            validated_data['share_usernames'] = []
+            # Remove later
+            validated_data['email_list'] = []
+
             response = save_document(
                 collection=DOWELL_GROUP_COLLECTION,
                 value=validated_data,

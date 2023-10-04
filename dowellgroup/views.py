@@ -39,10 +39,9 @@ class DowellGroupList(APIView):
             user_id = request.data.get('user_id')
             created_by = request.data.get('created_by')
             created_at_position = request.data.get('created_at_position')
-            email_list = request.data.get('email_list').split(",")
+            group_detail = request.data.get('group_detail', [])
             csv_file = request.data.get('csv_file')
             group_name = request.data.get('group_name')
-            group_detail = []
 
             if not csv_file:
                 data = {
@@ -51,9 +50,9 @@ class DowellGroupList(APIView):
                     'user_id': user_id,
                     'created_by': created_by,
                     'created_at_position': created_at_position,
-                    'email_list': email_list,
                     'group_name': group_name,
-                    'group_detail': []
+                    'load_from_csv': False,
+                    'group_detail': group_detail
                 }
             else:
                 group_detail = []
@@ -89,8 +88,8 @@ class DowellGroupList(APIView):
                         'user_id': user_id,
                         'created_by': created_by,
                         'created_at_position': created_at_position,
-                        'email_list': email_list,
                         'group_name': group_name,
+                        'load_from_csv': True,
                         'group_detail': group_detail
                     }
                 except IndexError:
@@ -136,10 +135,50 @@ class DowellGroupDetail(APIView):
 
             if response["isSuccess"] and response['data']:
                 dowellgroup = response["data"][0]['DowellGroup']
-                dowellgroup['group_name'] = body['group_name']
-                dowellgroup['org_id'] = body['org_id']
-                dowellgroup['org_name'] = body['org_name']
-                dowellgroup['email_list'] = body['email_list']
+                if "share_usernames" not in dowellgroup: dowellgroup['share_usernames'] = []
+                
+                if body['action'] == "share-dowell-group":
+                    # add recipient_username to share_access
+                    dowellgroup['share_usernames'].append(body['share_username'])
+                else:
+                    dowellgroup['group_name'] = body['group_name']
+                    dowellgroup['org_id'] = body['org_id']
+                    dowellgroup['org_name'] = body['org_name']
+                    dowellgroup['email_list'] = body['email_list'].split(",")
+                    dowellgroup['group_detail'] = body['group_detail']
+
+                response = DowellGroupSerializer.update(group_id, dowellgroup)
+
+            else:
+                logger.error(f"Group Not Found For {id}")
+                return Response(
+                    {"message": f"Group Not Found For {id}"},
+                    status=status.HTTP_404_NOT_FOUND)
+
+            return Response(response, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            logger.error(str(e))
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def patch(self, request, group_id, format=None):
+        try:
+            body = json.loads(request.body)
+            response = fetch_document(
+                collection=DOWELL_GROUP_COLLECTION,
+                fields={
+                    "_id": group_id
+                },
+            )
+
+            if response["isSuccess"] and response['data']:
+                dowellgroup = response["data"][0]['DowellGroup']
+
+                if "share_access" not in dowellgroup: dowellgroup['share_access'] = []
+
+                # add username to share_access
+                dowellgroup['share_access'].append(body['username'])
                 response = DowellGroupSerializer.update(group_id, dowellgroup)
 
             else:
