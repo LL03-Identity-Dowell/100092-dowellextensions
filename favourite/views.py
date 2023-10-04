@@ -36,20 +36,23 @@ class FavouritesView(APIView):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class setasfavourite(APIView):
-    def get_object(self, pk):
+    def get(self, request,pk, format=None):
         try:
             response = fetch_document(
                 FAVORITE_COLLECTION,
                 fields={
-                    "_id":pk
+                    "favorite.type":"favorite",
+                    "_id": pk
             })
+        
             return Response(response)
-
         except Exception as e:
-            logger.error(f"Favorite not found, {str(e)}")
+            logger.error(f"Bad request, {str(e)}")
             Response(
-                {"message": f"Favorite not found, {str(e)}"},
-                status=status.HTTP_404_NOT_FOUND)
+                {"message": f"Bad request, {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST)
+    
+
     def post(self, request):
         try:
             data = request.data
@@ -60,21 +63,7 @@ class setasfavourite(APIView):
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
-                product = data['productName']
-                import json
-                # Open the JSON file
-                with open('favourite/favourite.json') as f:
-                    # Load the JSON data into a Python dictionary
-                    json_data = json.load(f)
-                    # print(json_data)
-                # Get the values from the dictionary and put them in a list
-                for i in json_data:
-                    if product == i['title']:
-                        image_url = i['image']
-                        print(image_url)
-                data['image_url'] = image_url
-                
-    
+                # product = data['productName']                
                 serializer = favouriteSerializer(data=data)
                 if serializer.is_valid():
                     response = serializer.save()
@@ -83,21 +72,6 @@ class setasfavourite(APIView):
         except Exception as e:
             logger.error(f"Error Setting Favorite ({str(e)})")
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    def get(self, format=None):
-        try:
-            response = fetch_document(
-                FAVORITE_COLLECTION,
-                fields={
-                    "favorite.type":"favorite",
-            })
-        
-            return Response(response)
-        except Exception as e:
-            logger.error(f"Bad request, {str(e)}")
-            Response(
-                {"message": f"Bad request, {str(e)}"},
-                status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request, pk, format=None):
         try:
@@ -113,6 +87,18 @@ class setasfavourite(APIView):
 
             if response["isSuccess"] and response['data']:
                 favorite = response["data"][0]['favorite']
+                if "image_url" in favorite:
+                    favorite["image_url"] = body.get("image_url",favorite["image_url"])
+                if "productName" in favorite:
+                    favorite["productName"] = body.get("productName",favorite["productName"])
+                if "productId" in favorite:
+                    favorite["productId"] = body.get("productId",favorite["productId"])
+                if "orgName" in favorite:
+                    favorite["orgName"] = body.get("orgName",favorite["orgName"])
+                if "image" in favorite:
+                    favorite["image"] = body.get("image",favorite["image"])
+
+
                 response = favouriteSerializer.update(pk, favorite)
             else:
                 logger.error(f"Favorite Not Found For {id}")
@@ -230,7 +216,6 @@ class FavouriteImageDetail(APIView):
 
     def put(self, request, user_id, favorite_img_id, format=None):
 
-        #What fields are expected to be updated???
 
         try:
             body = json.loads(request.body)
