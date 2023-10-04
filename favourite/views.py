@@ -19,6 +19,19 @@ import json
 
 
 
+class OldFavouritesView(APIView):
+    def get(self,request, username):
+        # username = request.data.get('username', None)
+        if username:
+            try:
+                favourites = favourite.objects.filter(username = username)
+                serializer = favouriteSerializer(favourites, many=True)
+                return Response(serializer.data)
+            except favourite.DoesNotExist:
+                return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'all fields required'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class Oldfavourite(APIView):
     def get_object(self, pk):
@@ -49,6 +62,7 @@ class Oldfavourite(APIView):
                     print(image_url)
             data['image_url'] = image_url
             
+ 
             serializer = favouriteSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()

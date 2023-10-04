@@ -2,9 +2,9 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
-    path('favourite/',FavouritesView.as_view()),
+    path('favourite/',OldFavouritesView.as_view()),
     path('favourite/<int:pk>',Oldfavourite.as_view()),
-    path('favourites/<str:user_id>',Oldfavourite.as_view()),
+    path('favourites/<str:username>',Oldfavourite.as_view()),
     # path('favouriteIcon/',favouriteIcon.as_view()),
 
     #new endpoints
