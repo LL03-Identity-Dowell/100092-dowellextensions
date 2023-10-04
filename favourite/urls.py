@@ -5,7 +5,7 @@ urlpatterns = [
     # Old Endpoint
     path('favourite/',Oldsetasfavourite.as_view()),
     path('favourite/<int:pk>',Oldsetasfavourite.as_view()),
-    path('favourites/<str:username>',OldFavouritesView.as_view()),
+    # path('favourites/<str:username>',OldFavouritesView.as_view()),
     path('favouriteIcon/',OldfavouriteIcon.as_view()),
     path('favouriteImage/', OldFavouriteImageView.as_view()),
     path('favouriteImage/<str:username>', OldFavouriteImageView.as_view()),
