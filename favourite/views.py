@@ -78,7 +78,6 @@ class Oldsetasfavourite(APIView):
         except:
             return Response({"message": "no data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-
 @method_decorator(csrf_exempt, name='dispatch')
 class OldfavouriteIcon(APIView):
     def get(self, request):
@@ -86,7 +85,6 @@ class OldfavouriteIcon(APIView):
             json_data = json.load(f)
             return Response(json_data)
         
-
 @method_decorator(csrf_exempt, name='dispatch') 
 class OldFavouriteImageView(APIView):
     def post(self, request):
@@ -152,8 +150,7 @@ class FavouritesView(APIView):
         except Exception as e:
             logger.error(f"Error Setting Favorite ({str(e)})")
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-            
+             
 class FavouritesByUserIdView(APIView):
     def get(self,request, user_id):
         try:
@@ -171,7 +168,6 @@ class FavouritesByUserIdView(APIView):
             Response(
                 {"message": f"Favorite not found, {str(e)}"},
                 status=status.HTTP_404_NOT_FOUND)
-
 
 @method_decorator(csrf_exempt, name='dispatch')
 class setasfavourite(APIView):
@@ -255,7 +251,6 @@ class setasfavourite(APIView):
             logger.error(str(e))
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-
 @method_decorator(csrf_exempt, name='dispatch') 
 class FavouriteImageView(APIView):
     def post(self, request):
@@ -287,9 +282,6 @@ class FavouriteImageView(APIView):
             return Response(serializer.data)
         except favourite.DoesNotExist:
             return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
-
-
-
 
 class FavouriteImageList(APIView):
     def get(self, request, user_id, format=None):
@@ -324,8 +316,6 @@ class FavouriteImageList(APIView):
         except Exception as e:
             logger.error(f"Error Creating Favorite Image ({str(e)})")
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 class FavouriteImageDetail(APIView):
     def get(self, request, user_id, favorite_img_id, format=None):
