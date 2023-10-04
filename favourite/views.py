@@ -17,45 +17,18 @@ import json
 
 
 
-
-
-class OldFavouritesView(APIView):
-    def get(self,request, username):
-        try:
-            response = fetch_document(
-                FAVORITE_COLLECTION,
-                fields={
-                    "username":username
-            })
-        
-            return Response(response)
-        except Exception as e:
-            logger.error(f"Favorite not found, {str(e)}")
-            Response(
-                {"message": f"Favorite not found, {str(e)}"},
-                status=status.HTTP_404_NOT_FOUND)
-
-
+### BEGIN Remove this code after the new version has been publish ####
 @method_decorator(csrf_exempt, name='dispatch')
 class Oldsetasfavourite(APIView):
     def get_object(self, pk):
         try:
-            response = fetch_document(
-                FAVORITE_COLLECTION,
-                fields={
-                    "_id":pk
-            })
-            return Response(response)
-
-        except Exception as e:
-            logger.error(f"Favorite not found, {str(e)}")
-            Response(
-                {"message": f"Favorite not found, {str(e)}"},
-                status=status.HTTP_404_NOT_FOUND)
+            return favourite.objects.get(pk=pk)
+        except favourite.DoesNotExist:
+            return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
     def post(self, request):
         data = request.data.copy()
         if 'image' in data and data['image']:
-            serializer = favouriteSerializer(data=data)
+            serializer = OldfavouriteSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -75,8 +48,7 @@ class Oldsetasfavourite(APIView):
                     print(image_url)
             data['image_url'] = image_url
             
- 
-            serializer = favouriteSerializer(data=data)
+            serializer = OldfavouriteSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -85,14 +57,14 @@ class Oldsetasfavourite(APIView):
     
     def get(self, request, format=None):
         snippets = favourite.objects.all()
-        serializer = favouriteSerializer(snippets, many=True)
+        serializer = OldfavouriteSerializer(snippets, many=True)
         return Response(serializer.data)
     
     def put(self, request, pk, format=None):
         snippet = self.get_object(pk)
         data = request.data
         snippet.save()
-        serializer = favouriteSerializer(snippet, data=request.data)
+        serializer = OldfavouriteSerializer(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -114,12 +86,13 @@ class OldfavouriteIcon(APIView):
             json_data = json.load(f)
             return Response(json_data)
         
+
 @method_decorator(csrf_exempt, name='dispatch') 
 class OldFavouriteImageView(APIView):
     def post(self, request):
         image = request.data.get('image', None)
         username = request.data.get('username', None)
-        session_id = request.data.get('session_id', None) 
+        session_id = request.data.get('session_id', None)
 
         if image and username and session_id:
             if not type(image) == str:
@@ -129,7 +102,7 @@ class OldFavouriteImageView(APIView):
                 image_format = imghdr.what(None, image_data)
                 image_data_base64_string = f"data:image/{image_format};base64,{image_data_base64_string}"
                 request.data['image'] = image_data_base64_string
-            serializer = ImageSerializer(data=request.data)
+            serializer = OldImageSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -141,11 +114,12 @@ class OldFavouriteImageView(APIView):
     def get(self, request, username):
         try:
             favourites = FavouriteImage.objects.filter(username = username)
-            serializer = ImageSerializer(favourites, many=True)
+            serializer = OldImageSerializer(favourites, many=True)
             return Response(serializer.data)
         except favourite.DoesNotExist:
             return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
-
+        
+### END Remove this code after the new version has been publish ####
 
 
 class FavouritesView(APIView):

@@ -8,6 +8,20 @@ from utils.dowell_db_call import (
     FAVORITE_COLLECTION
 )
  
+### BEGIN Remove this code after the new version has been publish ####
+class OldfavouriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = favourite
+        fields = '__all__'
+
+
+class OldImageSerializer(serializers.ModelSerializer):
+
+    # image = serializers.ReadOnlyField()
+    class Meta:
+        model = FavouriteImage
+        fields = ('id', 'session_id', 'username', 'image')
+### END Remove this code after the new version has been publish ####
  
 class favouriteSerializer(serializers.Serializer):
     user_id = serializers.CharField(max_length=50)
