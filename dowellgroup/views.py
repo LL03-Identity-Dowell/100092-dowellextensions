@@ -18,15 +18,32 @@ class DowellGroupList(APIView):
             params = request.query_params
             if "user_id" not in params:
                 return Response({"message": "Missing parameter 'user_id'"}, status=status.HTTP_400_BAD_REQUEST)
-
-            response_json = fetch_document(
+            
+            # load groups created by user
+            response = fetch_document(
                 collection=DOWELL_GROUP_COLLECTION,
                 fields={
                     "DowellGroup.user_id": params['user_id'],
                     "DowellGroup.deleted": False
                 }
             )
-            return Response(response_json)
+
+            # Get username
+            if response["data"]:
+                username = response["data"][0]['DowellGroup']['created_by']
+                # Retrive all group share with current username
+                share_response = fetch_document(
+                    collection=DOWELL_GROUP_COLLECTION,
+                    fields={
+                        "DowellGroup.share_usernames": { "$in": [username] },
+                        "DowellGroup.deleted": False
+                    }
+                )
+
+                # Add share response data to user response data
+                response["data"].extend(share_response["data"])
+
+            return Response(response)
         except Exception as e:
             logger.error(f"Bad Request, {str(e)}")
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -68,7 +85,7 @@ class DowellGroupList(APIView):
                         date = f'{row[0]} - {row[1]}'
                         name = row[8]
                         category = row[9]
-                        group_name = f'{location} {meter}-{category.split(",")[0]}'
+                        group_name = group_name
                         email = row[3]
 
                         groupData = {
@@ -144,7 +161,6 @@ class DowellGroupDetail(APIView):
                     dowellgroup['group_name'] = body['group_name']
                     dowellgroup['org_id'] = body['org_id']
                     dowellgroup['org_name'] = body['org_name']
-                    dowellgroup['email_list'] = body['email_list'].split(",")
                     dowellgroup['group_detail'] = body['group_detail']
 
                 response = DowellGroupSerializer.update(group_id, dowellgroup)
