@@ -17,12 +17,45 @@ import json
 
 
 class FavouritesView(APIView):
+    def get(self,request):
+        try:
+            response = fetch_document(
+                FAVORITE_COLLECTION,
+                fields={
+                    "favorite.type":"favorite",
+                    "favorite.deleted": False
+            })
+        
+            return Response(response)
+        except Exception as e:
+            logger.error(f"Favorite not found, {str(e)}")
+            Response(
+                {"message": f"Favorite not found, {str(e)}"},
+                status=status.HTTP_404_NOT_FOUND)
+            
+
+    def post(self, request):
+        try:
+            data = request.data
+            print(data)
+            serializer = favouriteSerializer(data=data)
+            if serializer.is_valid():
+                response = serializer.save()
+                return Response(response, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"Error Setting Favorite ({str(e)})")
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+            
+class FavouritesByUserIdView(APIView):
     def get(self,request, user_id):
         try:
             response = fetch_document(
                 FAVORITE_COLLECTION,
                 fields={
                     "favorite.type":"favorite",
+                    "favorite.deleted": False,
                     "favorite.user_id":user_id
             })
         
@@ -42,6 +75,7 @@ class setasfavourite(APIView):
                 FAVORITE_COLLECTION,
                 fields={
                     "favorite.type":"favorite",
+                    "favorite.deleted": False,
                     "_id": pk
             })
         
@@ -53,26 +87,6 @@ class setasfavourite(APIView):
                 status=status.HTTP_400_BAD_REQUEST)
     
 
-    def post(self, request):
-        try:
-            data = request.data
-            if 'image' in data and data['image']:
-                serializer = favouriteSerializer(data=data)
-                if serializer.is_valid():
-                    response = serializer.save()
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                # product = data['productName']                
-                serializer = favouriteSerializer(data=data)
-                if serializer.is_valid():
-                    response = serializer.save()
-                    return Response(response, status=status.HTTP_201_CREATED)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            logger.error(f"Error Setting Favorite ({str(e)})")
-            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
     def put(self, request, pk, format=None):
         try:
             body = json.loads(request.body)
@@ -87,17 +101,12 @@ class setasfavourite(APIView):
 
             if response["isSuccess"] and response['data']:
                 favorite = response["data"][0]['favorite']
-                if "image_url" in favorite:
-                    favorite["image_url"] = body.get("image_url",favorite["image_url"])
-                if "productName" in favorite:
-                    favorite["productName"] = body.get("productName",favorite["productName"])
-                if "productId" in favorite:
-                    favorite["productId"] = body.get("productId",favorite["productId"])
-                if "orgName" in favorite:
-                    favorite["orgName"] = body.get("orgName",favorite["orgName"])
-                if "image" in favorite:
-                    favorite["image"] = body.get("image",favorite["image"])
-
+                favorite["image_url"] = body["image_url"]
+                favorite["product_name"] = body["product_name"]
+                favorite["product_id"] = body["product_id"]
+                favorite["org_id"] = body["org_id"]
+                favorite["org_name"] = body["org_name"]
+                favorite["portfolio"] = body["portfolio"]
 
                 response = favouriteSerializer.update(pk, favorite)
             else:
@@ -112,14 +121,6 @@ class setasfavourite(APIView):
             logger.error(str(e))
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # snippet = self.get_object(pk)
-        # data = request.data
-        # snippet.save()
-        # serializer = favouriteSerializer(snippet, data=request.data)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data)
-        # return Response(snippet, status=status.HTTP_400_BAD_REQUEST
     
     def delete(self, request, pk, format=None):
         try:
@@ -149,13 +150,6 @@ class setasfavourite(APIView):
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
-# @method_decorator(csrf_exempt, name='dispatch')
-# class favouriteIcon(APIView):
-#     def get(self, request):
-#         with open('/home/100092/100092-dowellextensions/favourite/favouriteIcons.json') as f:
-#             json_data = json.load(f)
-#             return Response(json_data)
-        
 @method_decorator(csrf_exempt, name='dispatch') 
 class FavouriteImageView(APIView):
     def post(self, request):
