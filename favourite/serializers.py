@@ -7,16 +7,16 @@ from utils.dowell_db_call import (
     update_document,
     FAVORITE_COLLECTION
 )
-
+ 
+ 
 class favouriteSerializer(serializers.Serializer):
     user_id = serializers.CharField(max_length=50)
     username = serializers.CharField(max_length=300)
     portfolio = serializers.CharField(max_length=300)
-    productName = serializers.CharField(max_length=300)
-    productId = serializers.CharField(max_length=300)
-    action = serializers.BooleanField(default= True)
-    orgName = serializers.CharField(max_length=300)
-    image = serializers.ImageField(required=False)
+    product_name = serializers.CharField(max_length=300)
+    product_id = serializers.CharField(max_length=300)
+    org_id = serializers.CharField(max_length=255, required=True)
+    org_name = serializers.CharField(max_length=255, required=True)
     image_url = serializers.URLField(required=False)
 
     def create(self, validated_data):
