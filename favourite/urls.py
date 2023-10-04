@@ -3,8 +3,8 @@ from .views import *
 
 urlpatterns = [
     path('favourite/',FavouritesView.as_view()),
-    path('favourite/<int:pk>',setasfavourite.as_view()),
-    path('favourites/<str:user_id>',FavouritesView.as_view()),
+    path('favourite/<int:pk>',Oldfavourite.as_view()),
+    path('favourites/<str:user_id>',Oldfavourite.as_view()),
     # path('favouriteIcon/',favouriteIcon.as_view()),
 
     #new endpoints
