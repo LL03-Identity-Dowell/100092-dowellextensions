@@ -9,7 +9,7 @@ urlpatterns = [
 
     #new endpoints
     path('v1/favorites/',setasfavourite.as_view()),
-    path('v1/favorites/favourite_icon/',favouriteIcon.as_view()),
+    # path('v1/favorites/favourite_icon/',favouriteIcon.as_view()),
     path('v1/favorites/<str:pk>/', setasfavourite.as_view()),
     path('v1/users/<str:user_id>/favorites/',FavouritesView.as_view()),
     path('v1/favorites/<str:user_id>/images/', FavouriteImageList.as_view()),
