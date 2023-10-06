@@ -205,7 +205,7 @@ class setasfavourite(APIView):
                 favorite = response["data"][0]['favorite']
                 favorite["image_url"] = body["image_url"]
                 favorite["product_name"] = body["product_name"]
-                favorite["product_id"] = body["product_id"]
+                favorite["product_id"] = body["product_id"] if "product_id" in body else favorite["product_id"]
                 favorite["org_id"] = body["org_id"]
                 favorite["org_name"] = body["org_name"]
                 favorite["portfolio"] = body["portfolio"]

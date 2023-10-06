@@ -28,13 +28,13 @@ class favouriteSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=300)
     portfolio = serializers.CharField(max_length=300)
     product_name = serializers.CharField(max_length=300)
-    product_id = serializers.CharField(max_length=300)
     org_id = serializers.CharField(max_length=255, required=True)
     org_name = serializers.CharField(max_length=255, required=True)
     image_url = serializers.URLField(required=False)
 
     def create(self, validated_data):
         try:
+            validated_data['product_id'] = None
             validated_data['type'] = "favorite"
             validated_data['deleted'] = False
             validated_data['created_at'] = datetime.utcnow().isoformat()
