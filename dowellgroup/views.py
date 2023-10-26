@@ -1,3 +1,4 @@
+import datetime
 from io import TextIOWrapper
 from rest_framework.response import Response
 from .serializers import DowellGroupSerializer
@@ -59,6 +60,7 @@ class DowellGroupList(APIView):
             group_detail = request.data.get('group_detail', [])
             csv_file = request.data.get('csv_file')
             group_name = request.data.get('group_name')
+            csv_src = request.data.get('csv_src', None)
 
             if not csv_file:
                 data = {
@@ -69,49 +71,26 @@ class DowellGroupList(APIView):
                     'created_at_position': created_at_position,
                     'group_name': group_name,
                     'load_from_csv': False,
+                    'csv_src': None,
                     'group_detail': group_detail
                 }
             else:
-                group_detail = []
-                try:
-                    reader = csv.reader(TextIOWrapper(csv_file))
-                    next(reader)
-                    for row in reader:
-                        location = row[5]
-                        website = row[-1]
-                        meter = f'{row[6]} - {row[7]}'
-                        address = row[10]
-                        phone_number = row[-2]
-                        date = f'{row[0]} - {row[1]}'
-                        name = row[8]
-                        category = row[9]
-                        group_name = group_name
-                        email = row[3]
-
-                        groupData = {
-                            "location": location,
-                            "website": website,
-                            "meter": meter,
-                            "address": address,
-                            "phone_number": phone_number,
-                            "date": date,
-                            "name": name,
-                            "email": email
-                        }
-                        group_detail.append(groupData)
-                    data = {
-                        'org_name': org_name,
-                        'org_id': org_id,
-                        'user_id': user_id,
-                        'created_by': created_by,
-                        'created_at_position': created_at_position,
-                        'group_name': group_name,
-                        'load_from_csv': True,
-                        'group_detail': group_detail
-                    }
-                except IndexError:
-                    return Response({'error': 'Invalid data format in CSV file.'}, status=status.HTTP_400_BAD_REQUEST)
-
+                if csv_src == "meetup":
+                    group_detail = meetup_csv(csv_file)
+                else:
+                    # marketing-ad
+                    group_detail = marketing_ad_csv(csv_file)
+                data = {
+                    'org_name': org_name,
+                    'org_id': org_id,
+                    'user_id': user_id,
+                    'created_by': created_by,
+                    'created_at_position': created_at_position,
+                    'group_name': group_name,
+                    'load_from_csv': True,
+                    'csv_src': csv_src,
+                    'group_detail': group_detail
+                }
             serializer = DowellGroupSerializer(data=data)
             if serializer.is_valid():
                 response = serializer.save()
@@ -236,3 +215,67 @@ class DowellGroupDetail(APIView):
             print(e)
             logger.error(str(e))
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def marketing_ad_csv(csv_file):
+    group_detail = []
+    try:
+        reader = csv.reader(TextIOWrapper(csv_file))
+        next(reader)
+        for row in reader:
+            location = row[5]
+            website = row[-1]
+            meter = f'{row[6]} - {row[7]}'
+            address = row[10]
+            phone_number = row[-2]
+            date = f'{row[0]} - {row[1]}'
+            name = row[8]
+            category = row[9]
+            email = row[3]
+
+            groupData = {
+                "location": location,
+                "website": website,
+                "meter": meter,
+                "address": address,
+                "phone_number": phone_number,
+                "date": date,
+                "name": name,
+                "email": email
+            }
+            group_detail.append(groupData)
+
+        return group_detail
+    except IndexError:
+        return Response({'error': 'Invalid data format in CSV file.'}, status=status.HTTP_400_BAD_REQUEST)
+
+def meetup_csv(csv_file):
+    group_detail = []
+    try:
+        reader = csv.reader(TextIOWrapper(csv_file))
+        next(reader)
+        for row in reader:
+            date = row[1]
+            name = row[2]
+            city = row[3]
+            product = row[4]
+            type_of_enquiry = row[5]
+            date_of_enquiry_asked = row[6]
+            enquiry_handled_by_customer_support = row[7]
+            contact_number_for_particpant = row[8]
+
+            groupData = {
+                "date": date,
+                "name": name,
+                "city": city,
+                "product": product,
+                "type_of_enquiry": type_of_enquiry,
+                "date_of_enquiry_asked": date_of_enquiry_asked,
+                "enquiry_handled_by_customer_support": enquiry_handled_by_customer_support,
+                "contact_number_for_particpant": contact_number_for_particpant
+            }
+            group_detail.append(groupData)
+
+        return group_detail
+    except IndexError:
+        return Response({'error': 'Invalid data format in CSV file.'}, status=status.HTTP_400_BAD_REQUEST)
+

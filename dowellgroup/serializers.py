@@ -16,6 +16,7 @@ class DowellGroupSerializer(serializers.Serializer):
     org_name = serializers.CharField(max_length=255, required=True)
     created_at_position = serializers.CharField(max_length=255, required=True)
     load_from_csv = serializers.BooleanField(default=False)
+    csv_src = serializers.CharField(max_length=50, required=False, allow_null=True)
     group_detail = serializers.ListField(required=True)
 
     def create(self, validated_data):
