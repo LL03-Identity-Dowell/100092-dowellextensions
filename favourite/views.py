@@ -141,7 +141,7 @@ class FavouritesView(APIView):
     def post(self, request):
         try:
             data = request.data
-            print(data)
+            # print(data)
             serializer = favouriteSerializer(data=data)
             if serializer.is_valid():
                 response = serializer.save()
