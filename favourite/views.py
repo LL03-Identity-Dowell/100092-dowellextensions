@@ -16,7 +16,6 @@ from utils.dowell_db_call import (
 import json
 
 
-
 ### BEGIN Remove this code after the new version has been publish ####
 @method_decorator(csrf_exempt, name='dispatch')
 class Oldsetasfavourite(APIView):
@@ -24,7 +23,8 @@ class Oldsetasfavourite(APIView):
         try:
             return favourite.objects.get(pk=pk)
         except favourite.DoesNotExist:
-            return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Not Found"}, status=status.HTTP_404_NOT_FOUND)
+
     def post(self, request):
         data = request.data.copy()
         if 'image' in data and data['image']:
@@ -47,19 +47,18 @@ class Oldsetasfavourite(APIView):
                     image_url = i['image']
                     print(image_url)
             data['image_url'] = image_url
-            
+
             serializer = OldfavouriteSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    
     def get(self, request, format=None):
         snippets = favourite.objects.all()
         serializer = OldfavouriteSerializer(snippets, many=True)
         return Response(serializer.data)
-    
+
     def put(self, request, pk, format=None):
         snippet = self.get_object(pk)
         data = request.data
@@ -69,23 +68,25 @@ class Oldsetasfavourite(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(snippet, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def delete(self, request, pk, format=None):
         try:
             snippet = self.get_object(pk)
             snippet.delete()
-            return Response([],status=status.HTTP_204_NO_CONTENT)
+            return Response([], status=status.HTTP_204_NO_CONTENT)
         except:
             return Response({"message": "no data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class OldfavouriteIcon(APIView):
     def get(self, request):
         with open('/home/100092/100092-dowellextensions/favourite/favouriteIcons.json') as f:
             json_data = json.load(f)
             return Response(json_data)
-        
-@method_decorator(csrf_exempt, name='dispatch') 
+
+
+@method_decorator(csrf_exempt, name='dispatch')
 class OldFavouriteImageView(APIView):
     def post(self, request):
         image = request.data.get('image', None)
@@ -108,40 +109,39 @@ class OldFavouriteImageView(APIView):
                 return Response(serializer.errors,
                                 status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'all fields required'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def get(self, request, username):
         try:
-            favourites = FavouriteImage.objects.filter(username = username)
+            favourites = FavouriteImage.objects.filter(username=username)
             serializer = OldImageSerializer(favourites, many=True)
             return Response(serializer.data)
         except favourite.DoesNotExist:
-            return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
-        
+            return Response({"message": "Not Found"}, status=status.HTTP_404_NOT_FOUND)
+
 ### END Remove this code after the new version has been publish ####
 
 
 class FavouritesView(APIView):
-    def get(self,request):
+    def get(self, request):
         try:
             response = fetch_document(
                 FAVORITE_COLLECTION,
                 fields={
-                    "favorite.type":"favorite",
+                    "favorite.type": "favorite",
                     "favorite.deleted": False
-            })
-        
+                })
+
             return Response(response)
         except Exception as e:
             logger.error(f"Favorite not found, {str(e)}")
             Response(
                 {"message": f"Favorite not found, {str(e)}"},
                 status=status.HTTP_404_NOT_FOUND)
-            
 
     def post(self, request):
         try:
             data = request.data
-            print(data)
+            # print(data)
             serializer = favouriteSerializer(data=data)
             if serializer.is_valid():
                 response = serializer.save()
@@ -150,18 +150,19 @@ class FavouritesView(APIView):
         except Exception as e:
             logger.error(f"Error Setting Favorite ({str(e)})")
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-             
+
+
 class FavouritesByUserIdView(APIView):
-    def get(self,request, user_id):
+    def get(self, request, user_id):
         try:
             response = fetch_document(
                 FAVORITE_COLLECTION,
                 fields={
-                    "favorite.type":"favorite",
+                    "favorite.type": "favorite",
                     "favorite.deleted": False,
-                    "favorite.user_id":user_id
-            })
-        
+                    "favorite.username": user_id
+                })
+
             return Response(response)
         except Exception as e:
             logger.error(f"Favorite not found, {str(e)}")
@@ -169,25 +170,25 @@ class FavouritesByUserIdView(APIView):
                 {"message": f"Favorite not found, {str(e)}"},
                 status=status.HTTP_404_NOT_FOUND)
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class setasfavourite(APIView):
-    def get(self, request,pk, format=None):
+    def get(self, request, pk, format=None):
         try:
             response = fetch_document(
                 FAVORITE_COLLECTION,
                 fields={
-                    "favorite.type":"favorite",
+                    "favorite.type": "favorite",
                     "favorite.deleted": False,
                     "_id": pk
-            })
-        
+                })
+
             return Response(response)
         except Exception as e:
             logger.error(f"Bad request, {str(e)}")
             Response(
                 {"message": f"Bad request, {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST)
-    
 
     def put(self, request, pk, format=None):
         try:
@@ -223,7 +224,6 @@ class setasfavourite(APIView):
             logger.error(str(e))
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    
     def delete(self, request, pk, format=None):
         try:
             response = fetch_document(
@@ -250,13 +250,14 @@ class setasfavourite(APIView):
             print(e)
             logger.error(str(e))
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-@method_decorator(csrf_exempt, name='dispatch') 
+
+
+@method_decorator(csrf_exempt, name='dispatch')
 class FavouriteImageView(APIView):
     def post(self, request):
         image = request.data.get('image', None)
         username = request.data.get('username', None)
-        session_id = request.data.get('session_id', None) 
+        session_id = request.data.get('session_id', None)
 
         if image and username and session_id:
             if not type(image) == str:
@@ -274,14 +275,15 @@ class FavouriteImageView(APIView):
                 return Response(serializer.errors,
                                 status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'all fields required'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def get(self, request, username):
         try:
-            favourites = FavouriteImage.objects.filter(username = username)
+            favourites = FavouriteImage.objects.filter(username=username)
             serializer = ImageSerializer(favourites, many=True)
             return Response(serializer.data)
         except favourite.DoesNotExist:
-            return Response({"message":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Not Found"}, status=status.HTTP_404_NOT_FOUND)
+
 
 class FavouriteImageList(APIView):
     def get(self, request, user_id, format=None):
@@ -317,6 +319,7 @@ class FavouriteImageList(APIView):
             logger.error(f"Error Creating Favorite Image ({str(e)})")
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class FavouriteImageDetail(APIView):
     def get(self, request, user_id, favorite_img_id, format=None):
         try:
@@ -327,7 +330,7 @@ class FavouriteImageDetail(APIView):
                     "favorite.user_id": user_id,
                     "favorite.deleted": False,
                     "favorite.type": "favorite-image"
-                    
+
                 },
             )
             return Response(response_json)
@@ -339,7 +342,6 @@ class FavouriteImageDetail(APIView):
                 status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, user_id, favorite_img_id, format=None):
-
 
         try:
             body = json.loads(request.body)

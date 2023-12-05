@@ -7,8 +7,10 @@ from utils.dowell_db_call import (
     update_document,
     FAVORITE_COLLECTION
 )
- 
+
 ### BEGIN Remove this code after the new version has been publish ####
+
+
 class OldfavouriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = favourite
@@ -22,13 +24,14 @@ class OldImageSerializer(serializers.ModelSerializer):
         model = FavouriteImage
         fields = ('id', 'session_id', 'username', 'image')
 ### END Remove this code after the new version has been publish ####
- 
+
+
 class favouriteSerializer(serializers.Serializer):
-    user_id = serializers.CharField(max_length=50)
-    username = serializers.CharField(max_length=300)
+    user_id = serializers.CharField(max_length=50, required=False)
+    username = serializers.CharField(max_length=300, required=True)
     portfolio = serializers.CharField(max_length=300)
     product_name = serializers.CharField(max_length=300)
-    org_id = serializers.CharField(max_length=255, required=True)
+    org_id = serializers.CharField(max_length=255, required=False)
     org_name = serializers.CharField(max_length=255, required=True)
     image_url = serializers.URLField(required=False)
 
@@ -60,7 +63,7 @@ class favouriteSerializer(serializers.Serializer):
         except Exception as e:
             logger.info(f"Favorite Not Updated: ({e})")
             raise ValueError(f"Favorite Not Updated: ({e})")
-        
+
 
 class ImageSerializer(serializers.Serializer):
     session_id = serializers.CharField(max_length=300)
